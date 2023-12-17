@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Digital - Búsqueda</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- Cabecera -->
+    <header class="header" role="banner">
+        <nav class="navbar" role="navigation">
+            <a href="#" class="logo">Biblioteca Digital</a>
+            <ul class="nav-menu">
+                <li><a href="#inicio" class="active-link">Inicio</a></li>
+                <li><a href="#libros">Catálogos</a></li>
+                <li><a href="#autores">Mi biblioteca</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Mensajes -->
+    <div id="alertMessage" style="display: none;"></div>
+    <div id="confirmationMessage" style="display: none;"></div>
+
+    <!-- Contenedor principal -->
+    <div class="main-content" role="main">
+        <div class="search-wrapper">
+            <div class="button-group">
+                <button class="action-btn" id="infoBtn" title="Obtener información sobre la búsqueda"><i
+                        class="fas fa-info-circle"></i> INFO</button>
+                <button class="action-btn" id="advancedSearchBtn" title="Realizar una búsqueda avanzada"><i
+                        class="fas fa-cog"></i> BÚSQUEDA AVANZADA</button>
+            </div>
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-box"
+                    placeholder="Buscar libros, autores, categorías..." aria-label="Buscar en la biblioteca">
+                <button class="action-btn" id="searchBtn" title="Buscar en la biblioteca"><i class="fas fa-search"></i>
+                    BUSCAR</button>
+                <div class="voice-buttons-container">
+                    <button class="voice-btn" id="voiceSearchBtn" title="Buscar por voz"><i
+                            class="fas fa-microphone"></i></button>
+                    <button class="voice-btn" id="speakBtn" title="Leer texto en voz alta"><i
+                            class="fas fa-volume-up"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="results-and-filters-container">
+            <!-- Contenedor de filtros (visible solo en pantallas grandes) -->
+            <div id="filter-container" class="filter-container">
+                <!-- Búsqueda por Catálogo -->
+                <div class="search-options ">
+                    <div class="filterOptions">
+                        <div>
+                            <label for="selectCatalog"><i class="fas fa-book" title="Busca en los catalogos"></i> Buscar
+                                en:</label>
+                            <select id="selectCatalog" title="Selecciona un  catálogo">
+                                <!-- Opciones de catálogo aquí -->
+                            </select>
+                        </div>
+                        <!-- Selector de ordenar por -->
+                        <div>
+                            <label for="orderBy" title="Ordenar por"> <i class="fas fa-sort"></i> Ordenar por: </label>
+                            <select id="orderBy" title="Ordenar por">
+                                <option value="catalogo">Catálogo</option>
+                                <option value="titulo">Título</option>
+                                <option value="autor">Autor</option>
+                                <option value="formato_recurso">Formato de recurso</option>
+                                <option value="fecha_publicacion">Fecha de publicación</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="action-btn" id="savedSearchesBtn" aria-label="Consultar filtros guardados" title="Consultar búsquedas guardadas">
+                            <i class="fas fa-save"></i>FILTROS GUARDADOS</button>
+                    </div>
+                </div>
+                <div class="search-filters filterOptions">
+                    <label title="Filtra la busqueda por: "><i class="fas fa-filter"></i> Filtros de búsqueda:</label>
+                    <div class="row">
+                        <select class="field-select" title="Selecciona un campo: ">
+                            <option value="any">Cualquier campo</option>
+                            <option value="title">Título</option>
+                            <option value="author">Autor</option>
+                            <option value="subject">Materia</option>
+                        </select>
+                        <select class="condition-select" title="Selecciona una condición: ">
+                            <option value="contains">contiene</option>
+                            <option value="is">es (exacto)</option>
+                            <option value="starts_with">empieza por</option>
+                        </select>
+                        <input type="text" placeholder="Introduzca un término de búsqueda"
+                            title="Introduzca un término de búsqueda">
+                        <select class="logic-select logicSelect" title="Añadir nueva línea de filtro">
+                            <option>+ LíNEA</option>
+                            <option value="and">y</option>
+                            <option value="or">o</option>
+                            <option value="not">no</option>
+                        </select>
+                    </div>
+
+                    <!--Aquí aparecerá la explicación de la búsqueda según los filtros aplicados.-->
+                    <div class="search-explanation">
+                        <p id="searchDescription">Aquí aparecerá la explicación de la búsqueda según los filtros
+                            aplicados.
+                        </p>
+                        <button class="voice-btn" title="Leer descripción en voz alta">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filtros Adicionales -->
+                <div class="search-others">
+                    <label title="Opciones adicionales para refinar la búsqueda: ">Opciones Adicionales:</label>
+                    <div class="filterOptions">
+                        <div>
+                            <input type="checkbox" id="availableOnly" title="Mostrar sólo disponibles">
+                            <label for="availableOnly">Mostrar sólo disponibles</label>
+                        </div>
+                        <div>
+                            <i class="fas fa-map-marker-alt" title="Localización"></i>
+                            <select id="locationFilter" title="Localización">
+                                <option value="en_linea">Todas las localizaziones</option>
+                                <option value="en_linea">En línea</option>
+                                <option value="en_biblioteca">En biblioteca</option>
+                            </select>
+                        </div>
+                        <!-- Selector de Formato -->
+                        <div>
+                            <label for="format" title="Selecciona el formato del recurso"><i
+                                    class="fas fa-file-alt"></i>
+                                Formato:</label>
+                            <select id="format">
+                                <!-- Opciones de formato aquí -->
+                            </select>
+                        </div>
+                        <!-- Selector de Materia -->
+                        <div>
+                            <label for="subject" title="Selecciona la materia"><i class="fas fa-book-open"></i>
+                                Materia:</label>
+                            <select id="subject">
+                                <!-- Opciones de materia aquí -->
+                            </select>
+                        </div>
+                        <!-- Selector de Autor -->
+                        <div>
+                            <label for="author" title="Selecciona el autor"><i class="fas fa-user"></i> Autor:</label>
+                            <select id="author">
+                                <!-- Opciones de autor aquí -->
+                            </select>
+                        </div>
+                        <!-- Selector de Editorial -->
+                        <div>
+                            <label for="publisher" title="Selecciona la editorial"><i class="fas fa-print"></i>
+                                Editorial:</label>
+                            <select id="publisher">
+                                <!-- Opciones de editorial aquí -->
+                            </select>
+                        </div>
+                        <!-- Selector de Idioma -->
+                        <div>
+                            <label for="language"><i class="fas fa-globe"></i> Idioma:</label>
+                            <select id="language">
+                                <!-- Opciones de editorial aquí -->
+                            </select>
+                        </div>
+                        <!-- Selector de Fechas -->
+                        <div>
+                            <label for="dateIni"><i class="fas fa-calendar-plus"></i>Fecha de inicio:</label>
+                            <input type="date" id="dateIni">
+                        </div>
+                        <div>
+                            <label for="dateEnd"><i class="fas fa-calendar-minus"></i>Fecha de finalización:</label>
+                            <input type="date" id="dateEnd">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="filter-actions search-filters">
+                    <div>
+                        <!-- Botón para guardar la búsqueda, inicialmente oculto -->
+                        <button id="saveSearchButton" class="action-btn" ria-label="Guardar filtro actual" onclick="saveNewSearch()">
+                            <i class="fas fa-save"></i> GUARDAR FILTRO
+                        </button>
+                        <button id="clearFilters" class="action-btn" aria-label="Limpiar todos los filtros" title="Limpiar filtros">
+                            <i class="fas fa-broom"></i> LIMPIAR
+                        </button>
+                        <button id="applyFilterButton" class="action-btn" aria-label="Aplicar filtro actual" title="Aplicar filtro">
+                            <i class="fas fa-filter"></i> APLICAR FILTRO
+                        </button>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- Contenedor para mostrar los resultados de la búsqueda -->
+            <div id="search-results-container" class="search-results-container" aria-live="polite">
+                <div id="searchResults" class="search-results">
+                    <h2>Resultados de la Búsqueda</h2>
+                    <!-- Aquí se mostrarán los resultados -->
+                    <ol id="resultsList" role="list">
+                        <!-- Los resultados individuales se agregarán aquí como elementos de lista -->
+                    </ol>
+                    <div id="paginacion" class="contenedor-paginacion" aria-label="Paginación de resultados">
+                        <!-- Botones de paginación se generan aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón para mostrar filtros en dispositivos móviles -->
+    <button id="showFiltersBtn" class="action-btn" style="display: none;" title="Muestra los filtros" aria-label="Mostrar filtros">
+        Mostrar Filtros
+    </button>
+
+    <!-- Modal para Búsquedas Guardadas -->
+    <div id="savedSearchesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('savedSearchesModal')">&times;</span>
+            <h2>Selecciona la búsqueda guardada</h2>
+            <div id="noSavedSearchMessage">No hay búsquedas guardadas.</div>
+            <ul id="savedSearchList"></ul>
+        </div>
+    </div>
+
+    <!-- Modal para Información -->
+    <div id="infoModal" class="modal" role="dialog" aria-labelledby="infoModalTitle" aria-describedby="infoModalDesc">
+        <div class="modal-content">
+            <span class="close-btn" aria-label="Cerrar modal de información">&times;</span>
+            <button class="voice-btn" id="speakBtn" title="Leer texto en voz alta"><i
+                    class="fas fa-volume-up"></i></button>
+            <h2>Información Importante</h2>
+            <p>Escribe en la caja de búsqueda el término o términos sobre los que quieres encontrar información.</p>
+            <p>La búsqueda se hace en los campos: autor, título, materia, palabras claves, abstract, notas, ISSN,
+                ISBN y
+                DOI.</p>
+            <p>Escribe en la caja de búsqueda el término o términos sobre los que quieres encontrar información.</p>
+            <p>Usa comillas para encontrar frases exactas.</p>
+            <p> Por defecto la búsqueda utiliza el operador AND, pero puede utilizar otros operadores (NOT y OR).
+            </p>
+            <p>La búsqueda se hace en los campos: autor, título, materia, palabras claves, abstract, notas, ISSN,
+                ISBN y
+                DOI.</p>
+            <p>Para afinar los resultados de tu búsqueda, puedes ordenar los registros de la página de resultados y
+                / o
+                seleccionar o desactivar los diferentes filtros.</p>
+        </div>
+    </div>
+
+    <!-- Modal para Búsqueda Avanzada -->
+    <div id="advancedSearchModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('advancedSearchModal')">&times;</span>
+            <h2>Búsqueda Avanzada</h2>
+            <div class="search-filter">
+                <label for="selectCatalog"><i class="fas fa-book" title="Selecciona catálogo"></i> Buscar en:</label>
+                <select id="selectCatalog" title="Selecciona catálogo">
+                    <!-- Opciones de catálogo aquí -->
+                </select>
+            </div>
+            <div class="search-filters">
+                <label>Filtros de búsqueda:</label>
+                <div class="filter-row">
+                    <select class="field-select">
+                        <option value="any">Cualquier campo</option>
+                        <option value="title">Título</option>
+                        <option value="author">Autor</option>
+                        <option value="subject">Materia</option>
+                    </select>
+                    <select class="condition-select">
+                        <option value="contains">contiene</option>
+                        <option value="is">es (exacto)</option>
+                        <option value="starts_with">empieza por</option>
+                    </select>
+                    <input type="text" placeholder="Introduzca un término de búsqueda">
+                    <select class="logic-select">
+                        <option value="and">y</option>
+                        <option value="or">o</option>
+                        <option value="not">no</option>
+                    </select>
+                    <select class="field-select">
+                        <option value="any">Cualquier campo</option>
+                        <option value="title">Título</option>
+                        <option value="author">Autor</option>
+                        <option value="subject">Materia</option>
+                    </select>
+                    <select class="condition-select">
+                        <option value="contains">contiene</option>
+                        <option value="is">es (exacto)</option>
+                        <option value="starts_with">empieza por</option>
+                    </select>
+                    <input type="text" placeholder="Introduzca un término de búsqueda">
+                </div>
+                <div class="button-group">
+                    <button id="addFilter" class="action-btn" onclick="addFilter()"
+                        title="Añadir nueva línea de filtro">
+                        <i class="fas fa-plus-circle"></i> AÑADIR UNA NUEVA LÍNEA
+                    </button>
+                    <button id="savedSearchesAdvancedBtn" class="action-btn" title="Ver búsquedas guardadas">
+                        <i class="fas fa-save"></i> BÚSQUEDAS GUARDADAS
+                    </button>
+                    <button id="clearFilters" class="action-btn" title="Limpiar filtros">
+                        <i class="fas fa-broom"></i> LIMPIAR
+                    </button>
+                </div>
+
+            </div>
+            <div class="search-others">
+                <div class="row">
+                    <div class="column">
+                        <label for="format">Tipo de material:</label>
+                        <select id="format">
+                            <option value="any">Todos los formatos</option>
+                            <option value="book">Libros</option>
+                            <option value="article">Artículos</option>
+                            <option value="thesis">Tesis</option>
+                            <!-- Más opciones aquí -->
+                        </select>
+                    </div>
+                    <div class="column">
+                        <label for="language">Idioma:</label>
+                        <select id="language">
+                            <option value="any">Cualquier idioma</option>
+                            <option value="spanish">Español</option>
+                            <option value="english">Inglés</option>
+                            <option value="french">Francés</option>
+                            <!-- Más opciones aquí -->
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column">
+                        <label for="dateIni">Fecha de inicio:</label>
+                        <input type="date" id="dateIni">
+                    </div>
+                    <div class="column">
+                        <label for="dateEnd">Fecha de finalización:</label>
+                        <input type="date" id="dateEnd">
+                    </div>
+                </div>
+            </div>
+
+            <!--Aquí aparecerá la explicación de la búsqueda según los filtros aplicados.-->
+            <div class="search-explanation">
+                <p id="searchDescription">Aquí aparecerá la explicación de la búsqueda según los filtros aplicados.
+                </p>
+                <button class="voice-btn" title="Leer descripción en voz alta">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+            </div>
+            <div class="button-group">
+                <button id="performSearch" class="action-btn" title="Realizar búsqueda">
+                    <i class="fas fa-search"></i> BUSCAR
+                </button>
+                <button id="saveSearchAdvancedBtn" class="action-btn" title="Guardar esta búsqueda">
+                    <i class="fas fa-save"></i> GUARDAR BÚSQUEDA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!--Footer-->
+    <footer class="footer" role="contentinfo">
+        <p>&copy; 2023 Biblioteca Digital. Todos los derechos reservados.</p>
+    </footer>
+
+    <div id="autocompleteList" class="autocomplete-items" role="complementary"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

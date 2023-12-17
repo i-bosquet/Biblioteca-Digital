@@ -1,0 +1,751 @@
+/* Variables para colores, fuentes y sombras */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #012f61;
+    --terciary-color: #0099ff;
+    --background-color: #f5f5f5;
+    --text-color: white;
+    --modal-background: rgba(0, 0, 0, 0.4);
+    --tooltip-background: #555;
+    --footer-background: #333;
+    --primary-font: 'Arial', sans-serif;
+    --shadow-small: 0 2px 4px rgba(0, 0, 0, 0.2);
+    --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-large: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos base y fijaciones */
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: var(--primary-font);
+    background-color: var(--background-color);
+    box-sizing: content-box;
+    font-size: 15px;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Encabezado */
+.header {
+    height: 2.5vh; /* 20% del alto del viewport */
+    background: var(--primary-color);
+    padding: 20px 0;
+    box-shadow: var(--shadow-small);
+    color: var(--text-color);
+    width: 100%;
+    text-align: center;
+}
+
+.logo {
+    font-size: 24px;
+    text-decoration: none;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+/* Navegación */
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    justify-content: center;
+}
+
+.nav-menu li {
+    padding: 0 15px;
+}
+
+.nav-menu a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 18px;
+    padding: 5px;
+}
+
+.nav-menu a:hover {
+    background-color: var(--text-color) !important; /* Color al pasar el ratón por encima */
+    color: var(--primary-color);
+    transform: scale(1.1); /* Agrandar el link ligeramente */
+
+}
+
+.nav-menu a.active-link {
+    font-weight: bold;
+    background-color: var(--secondary-color);
+}
+
+/* Contenido principal */
+.main-content {
+    height: 95vh; /* 70% del alto del viewport */
+    display: flex;
+    flex-grow: 1; /* Asegura que el contenido principal ocupe todo el espacio disponible */
+    flex-direction: column;
+    justify-content: center; /* Centra verticalmente */
+    align-items: center; /* Centra horizontalmente */
+    overflow: auto; /* Permite el desplazamiento si es necesario */
+    padding: 0 10px;
+}
+
+/* Barra de búsqueda y botones */
+.search-wrapper {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.button-group {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.action-btn {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-block;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-small);
+}
+
+.action-btn i {
+    margin-right: 8px;
+}
+
+.action-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border-radius: 25px;
+    box-shadow: var(--shadow-medium);
+    padding: 10px 20px;
+}
+
+.search-box {
+    flex-grow: 1;
+    border: 2px solid #ced4da;
+    outline: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 25px;
+    transition: box-shadow 0.3s, border-color 0.3s;
+    box-shadow: var(--shadow-medium);
+}
+
+.search-box:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(50, 150, 255, 0.5);
+}
+
+.voice-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 18px;
+    color: var(--primary-color);
+}
+
+.voice-btn:hover {
+    color: var(--secondary-color);
+}
+
+.filterOptions{
+    display: flex;
+    flex-direction: column;
+    justify-content:left;
+    align-items:flex-start
+}
+.filterOptions *{
+    padding: 2px;
+}
+.filter-actions{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 5px !important;
+
+}
+
+/* Modales */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--modal-background);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 5px;
+    border: none;
+    width: 50%;
+    box-shadow: var(--shadow-large);
+}
+
+.modal .voice-btn {
+    margin: 0;
+    padding: 0;
+}
+
+.modal .button-group {
+    display: flex;
+    justify-content: space-around; /* Ajusta según sea necesario */
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    cursor: pointer;
+}
+
+h2 {
+    text-align: center;
+    color: var(--primary-color);
+}
+
+#savedSearchList,
+#advancedSavedSearchList
+ {
+    list-style: none;
+    padding: 0;
+}
+
+.saved-search-item {
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+    cursor: pointer;
+}
+
+.saved-search-item:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.delete-search-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: red; /* Cambia el color a rojo */
+    font-size: 18px;
+    float: right; /* Alinea el botón a la derecha */
+    margin-left: 10px; /* Espacio entre el texto y el botón */
+}
+
+.delete-search-btn:hover {
+    font-size: 25px;
+}
+
+/* Estilos para el modal de búsqueda avanzada */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2; /* Asegúrate de que el z-index sea suficientemente alto para estar sobre otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--modal-background);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* Centrado con un poco más de margen arriba y abajo */
+    padding: 20px;
+    border-radius: 10px;
+    border: none;
+    width: 80%; /* Ajusta esto según la anchura deseada para tu modal */
+    box-shadow: var(--shadow-large);
+}
+
+.search-filters, 
+.filter-row,
+.search-others {
+    margin-bottom: 10px;
+    background-color: #f8f9fa; /* Fondo ligeramente gris para cada sección */
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: var(--shadow-small);
+}
+
+.search-options {
+    display: flex;
+    margin-bottom: 10px;
+    background-color: #f8f9fa; /* Fondo ligeramente gris para cada sección */
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: var(--shadow-small);
+    justify-content: space-between;
+}
+
+.filter-row{
+    padding: 10px 0;
+}
+
+.filter-row>* {
+    margin: 5px 0;
+}
+
+.search-explanation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px;
+    padding: 10px 15px;
+    background-color: #e9e9e9; /* Un fondo distinto para la explicación de búsqueda */
+    border-radius: 5px;
+}
+
+.filter-container .logic-select {
+    padding: 5px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    border: none;
+}
+
+#searchDescription {
+    margin-right: 10px; /* Ajusta según necesidad */
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    padding: 5px 0;
+}
+
+.column {
+    flex: 1; /* Los elementos de la columna ocupan el espacio disponible por igual */
+    margin-right: 10px; /* Espacio entre las columnas */
+}
+
+.column:last-child {
+    margin-right: 0; /* El último elemento de la fila no necesita margen a la derecha */
+}
+
+/* Estilos para botones en el modal de búsqueda avanzada */
+.modal .action-btn {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-block;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-small);
+    margin-right: 10px; /* Espacio entre botones */
+    transition: background-color 0.3s;
+}
+
+.modal .action-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+.modal .action-btn i {
+    margin-right: 8px;
+}
+
+
+
+/* Pie de página */
+.footer {
+    height: 2.5vh; /* 10% del alto del viewport */
+    background: var(--footer-background);
+    color: var(--text-color);
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+}
+
+/* Tooltips */
+.action-btn:hover::after,
+.voice-btn:hover::after {
+    content: attr(title);
+    position: absolute;
+    padding: 5px;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background-color: var(--tooltip-background);
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 12px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.action-btn:hover::before,
+.voice-btn:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--tooltip-background) transparent transparent transparent;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.action-btn:hover::after,
+.action-btn:hover::before,
+.voice-btn:hover::after,
+.voice-btn:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+/*Resultados de las busquedas*/
+.search-results {
+    display:flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px;
+    background-color:var(--primary-color);
+    border-radius: 10px;
+    box-shadow: var(--shadow-small);
+    justify-content: space-between;
+}
+
+.search-results h2 {
+    color:var(--text-color)
+}
+
+.search-results ol {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    flex:1;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    counter-reset: search-result-counter;
+}
+
+.search-result-item {
+    counter-increment: search-result-counter;
+    background-color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: flex-start;
+}
+
+.search-result-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.search-result-item:before {
+    content: counter(search-result-counter) ".";
+    font-weight: bold;
+    margin-right: 10px;
+    margin-right: 15px; 
+}
+
+/* Estilos para los detalles internos del resultado */
+.result-cover img {
+    width: 100px;
+    object-fit: cover;
+    margin-right: 20px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3); /* Sombra para efecto 3D */
+}
+
+.result-info {
+    flex-grow: 1;
+}
+
+.result-format {
+    font-style: italic;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.result-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.result-author, .result-availability {
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.result-availability i {
+    color: green;
+}
+
+/* Iconos de acciones */
+.result-actions {
+    display: flex;
+    align-items:center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.result-actions .action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--primary-color);
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+.result-actions .action-btn:hover {
+    color: var(--secondary-color);
+    font-size: 18px;
+}
+
+/* Estilos para los resultados y el contenedor de filtros */
+.results-and-filters-container {
+    height: 100%; /* Ocupa todo el alto disponible del contenedor principal */
+    width: 100%;
+    display: none; /* Oculto por defecto */
+    flex-direction: row;
+    flex-grow: 1; /* Ocupa el espacio restante */
+    gap: 20px;
+    padding: 0px 0 20px;
+} 
+
+.filter-container {
+    width: 33%; /* 33% del ancho de .results-and-filters-container */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: var(--shadow-small);
+    flex: 1; /* Ocupa 1 parte del espacio disponible */
+}
+
+.search-results-container {
+    width: 67%; /* 67% del ancho de .results-and-filters-container */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    flex: 2;   /* Ocupa 2 parte del espacio disponible */
+}
+
+.filter-container, 
+.search-results-container {
+    flex: 1; /* Cada contenedor ocupa una parte igual del espacio disponible */
+    display: flex;
+    flex-direction: column;
+    overflow: auto; /* Permite el desplazamiento si el contenido es demasiado largo */
+}
+
+.boton-paginacion.activo {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+
+.show-filters-btn {
+    display: none;
+}
+
+/* Estilos para los botones de paginación */
+.boton-pagina {
+    background-color: var(--primary-color);
+    color: white; /* Color del texto */
+    font-weight: bold;
+    border: none;
+    padding: 5px 10px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer; /* Cambia el cursor a un puntero */
+    transition: background-color 0.3s, transform 0.2s; /* Transición suave para el hover y el agrandamiento */
+}
+
+/* Estilo para el botón de la página actual */
+.pagina-actual {
+    background-color: var(--secondary-color) /* Color más oscuro o diferente para la página actual */
+}
+
+/* Estilo para el efecto hover */
+.boton-pagina:hover {
+    background-color: var(--text-color); /* Color al pasar el ratón por encima */
+    color: var(--primary-color);
+    transform: scale(1.1); /* Agrandar el botón ligeramente */
+}
+
+/* Mensajes */
+#alertMessage {
+    background-color: red;
+
+}
+
+#confirmationMessage {
+    background-color: green;
+}
+
+#alertMessage, #confirmationMessage {
+    /* Otros estilos */
+    z-index: 1000; /* Ha de ser mayor que el z-index del modal */
+    position: fixed; /* Esto es necesario para que z-index funcione */
+    width: 100%;
+    color: white;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 768px) {
+    /* Ajustes para el menú en dispositivos móviles */
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nav-menu {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        margin-top: 10px;
+    }
+
+    .nav-menu li {
+        padding: 10px;
+    }
+
+    .main-content {
+        flex-direction: column;
+    }
+
+    /* Ajustes para la barra de búsqueda y botones */
+    .search-wrapper {
+        width: 95%; /* Ajustar al ancho de la pantalla */
+        flex-direction: column;
+    }
+
+    .button-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .action-btn {
+        width: 100%; /* Hacer que cada botón ocupe todo el ancho */
+        margin: 5px 0; /* Añadir espacio entre los botones */
+    }
+
+    .search-box {
+        width: 95%; 
+        margin-bottom: 10px;
+    }
+
+    .search-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .voice-buttons-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .voice-btn {
+        margin: 5px;
+    }
+
+    .modal-content {
+        width: 90%; /* Ajuste del ancho del modal para dispositivos móviles */
+    }
+
+    .row {
+        flex-direction: column;
+    }
+
+    .column {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .filter-container {
+        display: none;/* Visible en pantallas grandes */
+    }
+
+    .show-filters-btn {
+        display: block;
+        /* Estilos para tu botón de mostrar filtros */
+    }
+
+    .search-results {
+        flex-grow: 1;
+        box-shadow: var(--shadow-small);
+        padding: 10px
+    }
+    .results-and-filters-container{
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .search-results-container {
+        flex-direction: column; /* En dispositivos móviles, los contenedores se apilan verticalmente */
+        width: 100%;
+    }
+
+    .search-result-item{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-content: space-around;
+            align-items: center;
+    }
+
+    .search-result-item:before{
+        margin-bottom: 5px;
+        align-self: self-start;
+    }
+}

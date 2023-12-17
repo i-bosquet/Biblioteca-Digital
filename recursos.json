@@ -1,0 +1,403 @@
+{
+    "recursos": [
+        {
+            "catalogo": "Infantil",
+            "titulo": "Las aventuras de Luna",
+            "autor": "Carlos Pérez",
+            "editorial": "Ediciones del Sol",
+            "fecha_publicacion": 2018,
+            "ciudad": "Barcelona",
+            "materia": "Literatura Infantil",
+            "formato_recurso": "Libro",
+            "abstract": "Historias mágicas para niños.",
+            "descripcion": "Un libro lleno de fantasía y aventuras pensado para los más pequeños.",
+            "portada": "./assets/cubierta1.jpg",
+            "publicacion": {
+                "issn": "2345-6789",
+                "isbn": "123-4567890123",
+                "doi": "10.1001/abc"
+            },
+            "idioma": "Español",
+            "disponibilidad": true,
+            "localizacion": "En línea"
+        },
+        {
+            "catalogo": "Novela",
+            "titulo": "Los caballeros del rey",
+            "autor": "Mario Gonzalez",
+            "editorial": "Ediciones 25",
+            "fecha_publicacion": 2002,
+            "ciudad": "Madrid",
+            "materia": "Novela Histórica",
+            "formato_recurso": "Libro",
+            "abstract": "Novela historiaca envolvente",
+            "descripcion": "Novela historica que narra las aventuras y desventuras de los caballeros del rey en la edad media.",
+            "portada": "./assets/cubierta2.jpg",
+            "publicacion": {
+                "issn": "0489-1002",
+                "isbn": "999-20082332821",
+                "doi": "10.1000/2"
+            },
+            "idioma": "Español",
+            "disponibilidad": true,
+            "localizacion": "En línea"
+        },
+        {
+            "catalogo": "Novela",
+            "titulo": "Sombras en el puerto",
+            "autor": "Isabel Allende",
+            "editorial": "Editorial Marítima",
+            "fecha_publicacion": 1998,
+            "ciudad": "Valparaíso",
+            "materia": "Novela de suspense",
+            "formato_recurso": "Libro",
+            "abstract": "Una historia llena de misterio y suspense en un pequeño puerto.",
+            "descripcion": "Novela que entrelaza misterio y romance en el escenario de un enigmático puerto.",
+            "portada": "./assets/cubierta3.jpg",
+            "publicacion": {
+                "issn": "2001-1003",
+                "isbn": "978-2001003004",
+                "doi": "10.2001/003"
+            },
+            "idioma": "Español",
+            "disponibilidad": false,
+            "localizacion": "En biblioteca"
+        },
+        {
+            "catalogo": "Arte",
+            "titulo": "Expresiones del arte moderno",
+            "autor": "Laura Martín",
+            "editorial": "Editorial Creativa",
+            "fecha_publicacion": 2021,
+            "ciudad": "Barcelona",
+            "materia": "Arte Contemporáneo",
+            "formato_recurso": "Video",
+            "abstract": "Un recorrido visual por las tendencias artísticas modernas.",
+            "descripcion": "Un documental que explora las diversas corrientes del arte contemporáneo.",
+            "portada": "./assets/video.jpg",
+            "publicacion": {
+                "issn": "",
+                "isbn": "",
+                "doi": ""
+            },
+            "idioma": "Español",
+            "disponibilidad": true,
+            "localizacion": "En línea"
+        },
+        {
+            "catalogo": "Tecnología",
+            "titulo": "Innovación en la Tecnología",
+            "autor": "Laura Nuñez",
+            "editorial": "Editorial de Investigación",
+            "fecha_publicacion": 2022,
+            "ciudad": "Ciudad de la Cultura",
+            "materia": "Tecnología",
+            "formato_recurso": "Trabajo académico",
+            "abstract": "Resumen detallado de Innovación en la Tecnología.",
+            "descripcion": "Descripción amplia y detallada de Innovación en la Tecnología, un recurso de Trabajo Académico.",
+            "portada": "./assets/cubierta2.jpg",
+            "publicacion": {
+                "issn": "1020-2022",
+                "isbn": "978-3000000000",
+                "doi": "10.2022/abcd"
+            },
+            "idioma": "Francés",
+            "disponibilidad": true,
+            "localizacion": "En línea"
+        },
+        {
+            "catalogo": "Novela",
+            "titulo": "La aventura del conocimiento",
+            "autor": "María Gómez",
+            "editorial": "Editorial Universo",
+            "fecha_publicacion": 2010,
+            "ciudad": "Madrid",
+            "materia": "Ciencia",
+            "formato_recurso": "Digital",
+            "abstract": "Un viaje por la ciencia moderna.",
+            "descripcion": "Este libro aborda los temas más relevantes de la ciencia actual.",
+            "portada": "./assets/cubierta3.jpg",
+            "publicacion": {
+                "issn": "1234-5678",
+                "isbn": "987-6543210",
+                "doi": "10.1000/182"
+            },
+            "idioma": "Español",
+            "disponibilidad": true,
+            "localizacion": "En biblioteca"
+        },
+        {
+            "catalogo": "Novela",
+            "titulo": "El último emperador",
+            "autor": "Carlos Ruiz",
+            "editorial": "Editorial Historia",
+            "fecha_publicacion": 2020,
+            "ciudad": "Barcelona",
+            "materia": "Novela histórica",
+            "formato_recurso": "Libro",
+            "abstract": "Una novela que nos lleva a la época del último emperador.",
+            "descripcion": "Un viaje al pasado para descubrir la vida del último emperador.",
+            "portada": "./assets/cubierta1.jpg",
+            "publicacion": {
+                "ISSN": "",
+                "ISBN": "978-3-16-148410-1",
+                "DOI": ""
+            },
+            "idioma": "Español",
+            "disponibilidad": false,
+            "localizacion": "En biblioteca"
+        },
+        {
+            "catalogo": "Novela",
+            "titulo": "El misterio del faro",
+            "autor": "Julia Navarro",
+            "editorial": "La fragua de los libros",
+            "fecha_publicacion": 1992,
+            "ciudad": "Ciudad 2",
+            "materia": "Literatura Contemporánea",
+            "formato_recurso": "Libro",
+            "abstract": "Resumen intrigante del libro El misterio del faro.",
+            "descripcion": "Descripción detallada y envolvente del libro El misterio del faro.",
+            "portada": "./assets/cubierta3.jpg",
+            "publicacion": {
+                "issn": "0000-1002",
+                "isbn": "999-20000002",
+                "doi": "10.1000/2"
+            },
+            "idioma": "Inglés",
+            "disponibilidad": false,
+            "localizacion": "En biblioteca"
+        },
+        {
+            "catalogo": "Arte",
+            "titulo": "El arte del siglo XXI",
+            "autor": "Pedro Gálvez",
+            "editorial": "Editorial de Investigación",
+            "fecha_publicacion": 2022,
+            "ciudad": "Ciudad de la Cultura",
+            "materia": "Arte y Diseño",
+            "formato_recurso": "Video",
+            "abstract": "Resumen detallado de El arte del siglo XXI.",
+            "descripcion": "Descripción amplia y detallada de El arte del siglo XXI, un recurso de Video.",
+            "portada": "./assets/video.jpg",
+            "publicacion": {
+                "issn": "1020-2022",
+                "isbn": "978-3003723700",
+                "doi": "10.2022/abcd"
+            },
+            "idioma": "Inglés",
+            "disponibilidad": true,
+            "localizacion": "En línea"
+        },
+        {
+            "catalogo": "Tecnología",
+            "titulo": "Innovación en la Tecnología",
+            "autor": "Laura Nuñez",
+            "editorial": "Editorial de Investigación",
+            "fecha_publicacion": 2020,
+            "ciudad": "Ciudad de la Cultura",
+            "materia": "Tecnología",
+            "formato_recurso": "Trabajo académico",
+            "abstract": "Resumen detallado de Innovación en la Tecnología.",
+            "descripcion": "Descripción amplia y detallada de Innovación en la Tecnología, un recurso de Trabajo Académico.",
+            "portada": "./assets/cubierta3.jpg",
+            "publicacion": {
+                "issn": "1020-2022",
+                "isbn": "978-3000000000",
+                "doi": "10.2022/abcd"
+            },
+            "idioma": "Inglés",
+            "disponibilidad": true,
+            "localizacion": "En línea"
+        },
+        {
+            "catalogo": "Novela",
+            "titulo": "La aventura del conocimiento",
+            "autor": "María Gómez",
+            "editorial": "Editorial Universo",
+            "fecha_publicacion": 2010,
+            "ciudad": "Madrid",
+            "materia": "Ciencia",
+            "formato_recurso": "Digital",
+            "abstract": "Un viaje por la ciencia moderna.",
+            "descripcion": "Este libro aborda los temas más relevantes de la ciencia actual.",
+            "portada": "./assets/cubierta1.jpg",
+            "publicacion": {
+                "issn": "1234-5678",
+                "isbn": "987-6543210",
+                "doi": "10.1000/182"
+            },
+            "idioma": "Español",
+            "disponibilidad": true,
+            "localizacion": "En biblioteca"
+        },
+        {
+            "catalogo": "Gastronomía",
+            "titulo": "Cocina Mediterránea",
+            "autor": "Elena Sánchez",
+            "editorial": "Editorial de Vanguardia",
+            "fecha_publicacion": 2021,
+            "ciudad": "Ciudad Innovadora",
+            "materia": "Gastronomía",
+            "formato_recurso": "Libro",
+            "abstract": "Un amplio análisis de Cocina Mediterránea.",
+            "descripcion": "Descripción completa de Cocina Mediterránea, una obra esencial sobre Gastronomía.",
+            "portada": "./assets/cubierta2.jpg",
+            "publicacion": {
+                "issn": "2030-2021",
+                "isbn": "978-4000000000",
+                "doi": "10.2021/xyz"
+            },
+            "idioma": "Español",
+            "disponibilidad": true,
+            "localizacion": "En línea"
+        },
+        {
+            "catalogo": "Viajes",
+            "titulo": "Viajando por Asia",
+            "autor": "Marta López",
+            "editorial": "Editorial de Vanguardia",
+            "fecha_publicacion": 2021,
+            "ciudad": "Ciudad Innovadora",
+            "materia": "Viajes",
+            "formato_recurso": "Revista",
+            "abstract": "Un amplio análisis de Viajando por Asia.",
+            "descripcion": "Descripción completa de Viajando por Asia, una obra esencial sobre Viajes.",
+            "portada": "./assets/cubierta3.jpg",
+            "publicacion": {
+                "issn": "2030-2021",
+                "isbn": "978-4000000000",
+                "doi": "10.2021/xyz"
+            },
+            "idioma": "Español",
+            "disponibilidad": true,
+            "localizacion": "En biblioteca"
+        },
+        {
+            "catalogo": "Ciencia",
+            "titulo": "Revista de Física Cuántica",
+            "autor": "María González",
+            "editorial": "Editorial Ciencia",
+            "fecha_publicacion": 2022,
+            "ciudad": "Valencia",
+            "materia": "Física Cuántica",
+            "formato_recurso": "Revista",
+            "abstract": "Una revista dedicada a los últimos avances en física cuántica.",
+            "descripcion": "Esta edición incluye artículos sobre la teoría de cuerdas y la física de partículas.",
+            "portada": "./assets/cubierta2.jpg",
+            "publicacion": {
+                "ISSN": "5678-9101",
+                "ISBN": "",
+                "DOI": "10.5678/cuatro"
+            },
+            "idioma": "Francés",
+            "disponibilidad": true,
+            "localizacion": "En línea"
+        },
+        {
+            "catalogo": "Arte",
+            "titulo": "El Renacimiento Italiano",
+            "autor": "Pedro Sánchez",
+            "editorial": "Editorial Arte",
+            "fecha_publicacion": 2021,
+            "ciudad": "Sevilla",
+            "materia": "Historia del Arte",
+            "formato_recurso": "Video",
+            "abstract": "Un documental sobre el Renacimiento italiano.",
+            "descripcion": "Este video explora el impacto del Renacimiento en la Italia del siglo XV.",
+            "portada": "./assets/video.jpg",
+            "publicacion": {
+                "ISSN": "",
+                "ISBN": "",
+                "DOI": ""
+            },
+            "idioma": "Español",
+            "disponibilidad": true,
+            "localizacion": "En línea"
+        },
+        {
+            "catalogo": "Psicología",
+            "titulo": "El impacto de la pandemia en la salud mental",
+            "autor": "Laura Pérez",
+            "editorial": "Universidad de Barcelona",
+            "fecha_publicacion": 2023,
+            "ciudad": "Barcelona",
+            "materia": "Psicología Clínica",
+            "formato_recurso": "Trabajo académico",
+            "abstract": "Un estudio sobre cómo la pandemia ha afectado la salud mental.",
+            "descripcion": "Este trabajo académico analiza los efectos de la pandemia en la salud mental de la población.",
+            "portada": "./assets/cubierta2.jpg",
+            "publicacion": {
+                "ISSN": "",
+                "ISBN": "",
+                "DOI": "10.9012/cinco"
+            },
+            "idioma": "Español",
+            "disponibilidad": false,
+            "localizacion": "En biblioteca"
+        },
+        {
+            "catalogo": "Ensayo",
+            "titulo": "La influencia de la tecnología en la sociedad",
+            "autor": "Ana Rodríguez",
+            "editorial": "Editorial Reflexiones",
+            "fecha_publicacion": 2023,
+            "ciudad": "Madrid",
+            "materia": "Sociología",
+            "formato_recurso": "Trabajo académico",
+            "abstract": "Un análisis sobre cómo la tecnología ha cambiado nuestra sociedad.",
+            "descripcion": "Este trabajo académico profundiza en los cambios sociales provocados por la tecnología.",
+            "portada": "./assets/cubierta3.jpg",
+            "publicacion": {
+                "issn": "",
+                "isbn": "",
+                "doi": "10.3001/004"
+            },
+            "idioma": "Español",
+            "disponibilidad": true,
+            "localizacion": "En línea"
+        },
+        {
+            "catalogo": "Ciencia",
+            "titulo": "Revista de Biología Molecular",
+            "autor": "Equipo Editorial",
+            "editorial": "Editorial Ciencia",
+            "fecha_publicacion": 2023,
+            "ciudad": "Valencia",
+            "materia": "Biología Molecular",
+            "formato_recurso": "Revista",
+            "abstract": "Los últimos avances en biología molecular.",
+            "descripcion": "Esta edición incluye artículos sobre genética y biología celular.",
+            "portada": "./assets/revista.jpg",
+            "publicacion": {
+                "issn": "3002-1005",
+                "isbn": "",
+                "doi": "10.3002/005"
+            },
+            "idioma": "Inglés",
+            "disponibilidad": false,
+            "localizacion": "En biblioteca"
+        },
+        {
+            "catalogo": "Música",
+            "titulo": "El sonido del jazz moderno",
+            "autor": "Juan Pérez",
+            "editorial": "Editorial Música",
+            "fecha_publicacion": 2022,
+            "ciudad": "Sevilla",
+            "materia": "Música Jazz",
+            "formato_recurso": "Video",
+            "abstract": "Un documental sobre el jazz moderno.",
+            "descripcion": "Este video explora las tendencias actuales en la música jazz.",
+            "portada": "./assets/video.jpg",
+            "publicacion": {
+                "issn": "",
+                "isbn": "",
+                "doi": ""
+            },
+            "idioma": "Español",
+            "disponibilidad": true,
+            "localizacion": "En línea"
+        }
+    ]
+}

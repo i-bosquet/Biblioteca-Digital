@@ -1,5 +1,5 @@
 # Biblioteca-Digital
-Un proyecto web que ofrece acceso a libros digitales de diferentes categorías y autores. 
+Un proyecto web que simula la búsqueda de recursos de una biblioteca digital mediante filtros avanzados. 
 
 
 Desarrollado con HTML, CSS y JavaScript
