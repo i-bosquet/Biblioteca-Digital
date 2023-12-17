@@ -202,7 +202,8 @@ function mostrarPagina(resultados, numeroPagina) {
         // Si no hay resultados, muestra un mensaje
         const busqueda = searchInput.value.trim()
         const noResultsMessage = document.createElement('li');
-        noResultsMessage.textContent = `No se encontraron resultados para "${busqueda}".`;
+        noResultsMessage.innerHTML = `No se encontraron resultados para: <strong>${searchDescription.innerHTML}</strong>.`;
+        noResultsMessage.classList.add('no-results');
         resultsList.appendChild(noResultsMessage);
     }
 }
@@ -346,8 +347,7 @@ clearFiltersModalBtn.addEventListener('click', function() {
     }
 });
 
-// Event listener para el botón de búsqueda
-searchBtn.addEventListener("click", handleSearchRequest);
+
 
 // Event listener para el campo de búsqueda
 searchInput.addEventListener('input', function() {
@@ -363,8 +363,13 @@ selectCatalog.addEventListener('change', function() {
     console.log("Nuevo valor seleccionado en el catálogo:", this.value);
 });
 
+
+
 // Event listener para los botones de búsqueda
-applyFilterModalBtn.addEventListener('click', handleSearchRequest);
+
+searchBtn.addEventListener("click", aplicarFiltro);
+
+applyFilterModalBtn.addEventListener('click', aplicarFiltro);
 
 applyFilterBtn.addEventListener('click', aplicarFiltro);
 
@@ -787,29 +792,6 @@ function verificaCondicion(valorCampo, condicion, termino) {
     }
 }
 
-function buscarConCriterios(recursos, criterios) {
-    const resultadosFiltrados = recursos.filter(recurso => {
-        return criterios.every(criterio => {
-            const valor = recurso[criterio.campo]; // asumiendo que el campo coincide con la clave del objeto
-            const termino = criterio.termino.toLowerCase();
-
-            switch (criterio.condicion) {
-                case 'contains':
-                    return valor.toLowerCase().includes(termino);
-                case 'is':
-                    return valor.toLowerCase() === termino;
-                case 'starts_with':
-                    return valor.toLowerCase().startsWith(termino);
-                default:
-                    return true;
-            }
-        });
-    });
-
-    console.log("Resultados después de aplicar criterios de búsqueda:", resultadosFiltrados);
-    return resultadosFiltrados;
-}
-
 function ordenarResultados(resultados, orden) {
     const resultadosOrdenados = resultados.sort((a, b) => {
         if (a[orden] < b[orden]) {
@@ -827,24 +809,31 @@ function ordenarResultados(resultados, orden) {
 
 async function aplicarFiltro() {
     try {
+        // Espera a que los recursos se carguen.
+        const todosLosRecursos = await cargarRecursos();
+        console.log("Recursos cargados en aplicarFiltro:", todosLosRecursos);
 
         // Recolectar criterios de búsqueda
         const criterios = getCriteriosDeBusqueda();
-        const orden = orderBy.value;
+        console.log("Criterios de búsqueda recolectados en aplicarFiltro:", criterios);
 
-        console.log("Criterios de búsqueda recolectados antes de buscar conCriterios en la función aplicarFiltro :", criterios);
-
-        console.log("todosLosRecursos recolectados antes de buscar conCriterios en la función aplicarFiltro :", criterios);
+        // Verifica si hay algún criterio no válido
+        criterios.forEach(criterio => {
+            if (typeof criterio.termino !== 'string') {
+                console.error("Error: término de criterio no es una cadena:", criterio);
+            }
+        });
 
         // Filtrar recursos
-        let resultados = buscarConCriterios(datosRecursos, criterios);
+        let resultados = buscarConCriterios(todosLosRecursos, criterios);
+        console.log("Resultados después de aplicar criterios:", resultados);
 
         // Ordenar resultados si se ha especificado
+        const orden = orderBy.value;
         if (orden) {
             resultados = ordenarResultados(resultados, orden);
+            console.log("Resultados después de ordenar:", resultados);
         }
-
-        console.log("Resultados a mostrar después de ordenar (si aplica):", resultados);
 
         // Mostrar resultados
         displayResults('', resultados); 
@@ -856,50 +845,33 @@ async function aplicarFiltro() {
 function getCriteriosDeBusqueda() {
     let criterios = [];
     let rows = document.querySelectorAll('.search-filters .row');
-    
+
     // Recolecta el valor del filtro de catálogo
     let catalogoSeleccionado = selectCatalog.value;
-    console.log("Catálogo seleccionado:", catalogoSeleccionado); // Añadido para depuración
-    
     if (catalogoSeleccionado && catalogoSeleccionado !== 'Todos los catálogos') {
         criterios.push({ campo: 'catalogo', condicion: 'is', termino: catalogoSeleccionado });
     }
 
-    // Si hay filas en los filtros, usa la primera como término de búsqueda principal
-    if (rows.length > 0) {
-        let primerFiltro = rows[0];
-        let termino = primerFiltro.querySelector('input[type="text"]').value.trim();
+    // Recolecta los criterios de búsqueda de cada fila de filtros
+    rows.forEach(row => {
+        let campo = row.querySelector('.field-select').value;
+        let condicion = row.querySelector('.condition-select').value;
+        let termino = row.querySelector('input[type="text"]').value.trim();
+
+        // Mapeo de los campos a las claves del objeto recurso
+        const mapeoCampo = {
+            'title': 'titulo',
+            'author': 'autor',
+            'subject': 'materia',
+            'any': 'any' // Agregar 'any' para manejar el caso 'Cualquier campo'
+        };
+
+        let campoMapeado = mapeoCampo[campo] || campo;
 
         if (termino) {
-            criterios.push({ campo: 'titulo', condicion: 'contains', termino: termino });
+            criterios.push({ campo: campoMapeado, condicion, termino });
         }
-    }
-
-    // Recolecta los criterios de los filtros adicionales si hay más de una fila
-    if (rows.length > 1) {
-        rows.forEach((row, index) => {
-            // Ignora la primera fila ya que se usó como término de búsqueda principal
-            if (index > 0) {
-                let campo = row.querySelector('.field-select').value;
-                let condicion = row.querySelector('.condition-select').value;
-                let termino = row.querySelector('input[type="text"]').value.trim();
-
-                // Mapeo de los campos a las claves del objeto recurso
-                const mapeoCampo = {
-                    'title': 'titulo',
-                    'author': 'autor',
-                    'subject': 'materia'
-                    // Agrega más mapeos si son necesarios
-                };
-
-                let campoMapeado = mapeoCampo[campo] || campo;
-
-                if (termino && campo !== 'any') {
-                    criterios.push({ campo: campoMapeado, condicion, termino });
-                }
-            }
-        });
-    }
+    });
 
     console.log("Criterios de búsqueda recolectados:", criterios);
     return criterios;
@@ -908,18 +880,21 @@ function getCriteriosDeBusqueda() {
 function buscarConCriterios(recursos, criterios) {
     return recursos.filter(recurso => {
         return criterios.every(criterio => {
-            const valor = recurso[criterio.campo]; // Asumiendo que el campo coincide con la clave del objeto
-            const termino = criterio.termino.toLowerCase();
+            if (criterio.campo === 'any') {
+                // Campos específicos para buscar cuando el criterio es 'any'
+                const camposParaBuscar = ['titulo', 'autor', 'materia'];
 
-            switch (criterio.condicion) {
-                case 'contains':
-                    return valor.toLowerCase().includes(termino);
-                case 'is':
-                    return valor.toLowerCase() === termino;
-                case 'starts_with':
-                    return valor.toLowerCase().startsWith(termino);
-                default:
-                    return true;
+                // Comprueba si algún campo especificado del recurso cumple con la condición
+                return camposParaBuscar.some(clave => {
+                    if (typeof recurso[clave] === 'string') {
+                        return verificaCondicion(recurso[clave], criterio.condicion, criterio.termino);
+                    }
+                    return false;
+                });
+            } else {
+                // Procesamiento normal para campos específicos
+                const valor = recurso[criterio.campo];
+                return verificaCondicion(valor, criterio.condicion, criterio.termino);
             }
         });
     });

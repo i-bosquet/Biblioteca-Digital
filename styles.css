@@ -498,6 +498,11 @@ h2 {
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3); /* Sombra para efecto 3D */
 }
 
+.no-results {
+    text-align: center;
+    color: var(--text-color);
+}
+
 .result-info {
     flex-grow: 1;
 }
