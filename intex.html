@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explora nuestra biblioteca digital con una amplia colección de libros, artículos y recursos educativos en múltiples formatos y categorías.">
     <title>Biblioteca Digital - Búsqueda</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
@@ -45,14 +46,14 @@
                 <div class="voice-buttons-container">
                     <button class="voice-btn" id="voiceSearchBtn" title="Buscar por voz"><i
                             class="fas fa-microphone"></i></button>
-                    <button class="voice-btn" id="speakBtn" title="Leer texto en voz alta"><i
+                    <button class="voice-btn" title="Leer texto en voz alta"><i
                             class="fas fa-volume-up"></i></button>
                 </div>
             </div>
         </div>
         <div class="results-and-filters-container">
             <!-- Contenedor de filtros (visible solo en pantallas grandes) -->
-            <div id="filter-container" class="filter-container">
+            <div id="filterContainer" class="filter-container">
                 <!-- Búsqueda por Catálogo -->
                 <div class="search-options ">
                     <div class="filterOptions">
@@ -186,13 +187,13 @@
                 <div class="filter-actions search-filters">
                     <div>
                         <!-- Botón para guardar la búsqueda, inicialmente oculto -->
-                        <button id="saveSearchButton" class="action-btn" ria-label="Guardar filtro actual" onclick="saveNewSearch()">
+                        <button id="saveFilterBtn" class="action-btn" aria-label="Guardar filtro actual" onclick="saveNewSearch()">
                             <i class="fas fa-save"></i> GUARDAR FILTRO
                         </button>
-                        <button id="clearFilters" class="action-btn" aria-label="Limpiar todos los filtros" title="Limpiar filtros">
+                        <button id="clearFiltersBtn" class="action-btn" aria-label="Limpiar todos los filtros" title="Limpiar filtros">
                             <i class="fas fa-broom"></i> LIMPIAR
                         </button>
-                        <button id="applyFilterButton" class="action-btn" aria-label="Aplicar filtro actual" title="Aplicar filtro">
+                        <button id="applyFilterBtn" class="action-btn" aria-label="Aplicar filtro actual" title="Aplicar filtro">
                             <i class="fas fa-filter"></i> APLICAR FILTRO
                         </button>
 
@@ -208,7 +209,7 @@
                     <ol id="resultsList" role="list">
                         <!-- Los resultados individuales se agregarán aquí como elementos de lista -->
                     </ol>
-                    <div id="paginacion" class="contenedor-paginacion" aria-label="Paginación de resultados">
+                    <div id="paginacionContainer" class="contenedor-paginacion" aria-label="Paginación de resultados">
                         <!-- Botones de paginación se generan aquí -->
                     </div>
                 </div>
@@ -224,7 +225,7 @@
     <!-- Modal para Búsquedas Guardadas -->
     <div id="savedSearchesModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('savedSearchesModal')">&times;</span>
+            <span class="closeBtn" onclick="closeModal('savedSearchesModal')">&times;</span>
             <h2>Selecciona la búsqueda guardada</h2>
             <div id="noSavedSearchMessage">No hay búsquedas guardadas.</div>
             <ul id="savedSearchList"></ul>
@@ -232,10 +233,10 @@
     </div>
 
     <!-- Modal para Información -->
-    <div id="infoModal" class="modal" role="dialog" aria-labelledby="infoModalTitle" aria-describedby="infoModalDesc">
+    <div id="infoModal" class="modal" role="dialog">
         <div class="modal-content">
-            <span class="close-btn" aria-label="Cerrar modal de información">&times;</span>
-            <button class="voice-btn" id="speakBtn" title="Leer texto en voz alta"><i
+            <span class="closeBtn" aria-label="Cerrar modal de información">&times;</span>
+            <button class="voice-btn" title="Leer texto en voz alta"><i
                     class="fas fa-volume-up"></i></button>
             <h2>Información Importante</h2>
             <p>Escribe en la caja de búsqueda el término o términos sobre los que quieres encontrar información.</p>
@@ -258,11 +259,11 @@
     <!-- Modal para Búsqueda Avanzada -->
     <div id="advancedSearchModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('advancedSearchModal')">&times;</span>
+            <span class="closeBtn" onclick="closeModal('advancedSearchModal')">&times;</span>
             <h2>Búsqueda Avanzada</h2>
             <div class="search-filter">
-                <label for="selectCatalog"><i class="fas fa-book" title="Selecciona catálogo"></i> Buscar en:</label>
-                <select id="selectCatalog" title="Selecciona catálogo">
+                <label for="selectCatalogModal"><i class="fas fa-book" title="Selecciona catálogo"></i> Buscar en:</label>
+                <select id="selectCatalogModal" title="Selecciona catálogo">
                     <!-- Opciones de catálogo aquí -->
                 </select>
             </div>
@@ -304,10 +305,10 @@
                         title="Añadir nueva línea de filtro">
                         <i class="fas fa-plus-circle"></i> AÑADIR UNA NUEVA LÍNEA
                     </button>
-                    <button id="savedSearchesAdvancedBtn" class="action-btn" title="Ver búsquedas guardadas">
+                    <button id="savedSearchesModalBtn" class="action-btn" title="Ver búsquedas guardadas">
                         <i class="fas fa-save"></i> BÚSQUEDAS GUARDADAS
                     </button>
-                    <button id="clearFilters" class="action-btn" title="Limpiar filtros">
+                    <button id="clearFiltersModalBtn" class="action-btn" title="Limpiar filtros">
                         <i class="fas fa-broom"></i> LIMPIAR
                     </button>
                 </div>
@@ -316,8 +317,8 @@
             <div class="search-others">
                 <div class="row">
                     <div class="column">
-                        <label for="format">Tipo de material:</label>
-                        <select id="format">
+                        <label for="formatModal">Tipo de material:</label>
+                        <select id="formatModal">
                             <option value="any">Todos los formatos</option>
                             <option value="book">Libros</option>
                             <option value="article">Artículos</option>
@@ -326,8 +327,8 @@
                         </select>
                     </div>
                     <div class="column">
-                        <label for="language">Idioma:</label>
-                        <select id="language">
+                        <label for="languageModal">Idioma:</label>
+                        <select id="languageModal">
                             <option value="any">Cualquier idioma</option>
                             <option value="spanish">Español</option>
                             <option value="english">Inglés</option>
@@ -338,30 +339,30 @@
                 </div>
                 <div class="row">
                     <div class="column">
-                        <label for="dateIni">Fecha de inicio:</label>
-                        <input type="date" id="dateIni">
+                        <label for="dateIniModal">Fecha de inicio:</label>
+                        <input type="date" id="dateIniModal">
                     </div>
                     <div class="column">
-                        <label for="dateEnd">Fecha de finalización:</label>
-                        <input type="date" id="dateEnd">
+                        <label for="dateEndModal">Fecha de finalización:</label>
+                        <input type="date" id="dateEndModal">
                     </div>
                 </div>
             </div>
 
             <!--Aquí aparecerá la explicación de la búsqueda según los filtros aplicados.-->
             <div class="search-explanation">
-                <p id="searchDescription">Aquí aparecerá la explicación de la búsqueda según los filtros aplicados.
+                <p id="searchDescriptionModal">Aquí aparecerá la explicación de la búsqueda según los filtros aplicados.
                 </p>
                 <button class="voice-btn" title="Leer descripción en voz alta">
                     <i class="fas fa-volume-up"></i>
                 </button>
             </div>
             <div class="button-group">
-                <button id="performSearch" class="action-btn" title="Realizar búsqueda">
-                    <i class="fas fa-search"></i> BUSCAR
+                <button id="applyFilterModalBtn" class="action-btn" title="Realizar búsqueda">
+                    <i class="fas fa-search"></i> APLICAR FILTRO
                 </button>
-                <button id="saveSearchAdvancedBtn" class="action-btn" title="Guardar esta búsqueda">
-                    <i class="fas fa-save"></i> GUARDAR BÚSQUEDA
+                <button id="saveFilterModalBtn" class="action-btn" title="Guardar esta búsqueda">
+                    <i class="fas fa-save"></i> GUARDAR FILTRO
                 </button>
             </div>
         </div>

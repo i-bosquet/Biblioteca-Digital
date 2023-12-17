@@ -1,7 +1,7 @@
 /* Variables para colores, fuentes y sombras */
 :root {
-    --primary-color: #007bff;
-    --secondary-color: #012f61;
+    --primary-color: #012f61;
+    --secondary-color: #007bff;
     --terciary-color: #0099ff;
     --background-color: #f5f5f5;
     --text-color: white;
@@ -70,14 +70,15 @@ body {
 
 .nav-menu a:hover {
     background-color: var(--text-color) !important; /* Color al pasar el ratón por encima */
-    color: var(--primary-color);
+    color: var(--secondary-color);
     transform: scale(1.1); /* Agrandar el link ligeramente */
 
 }
 
 .nav-menu a.active-link {
     font-weight: bold;
-    background-color: var(--secondary-color);
+    background-color: var(--text-color);
+    color: var(--primary-color);
 }
 
 /* Contenido principal */
@@ -217,15 +218,15 @@ body {
     justify-content: space-around; /* Ajusta según sea necesario */
 }
 
-.close-btn {
+.closeBtn {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
 
-.close-btn:hover,
-.close-btn:focus {
+.closeBtn:hover,
+.closeBtn:focus {
     color: black;
     cursor: pointer;
 }
@@ -657,6 +658,24 @@ h2 {
 
     .nav-menu li {
         padding: 10px;
+    }
+
+    .nav-menu a {
+        color:var(--primary-color);
+        text-decoration: none;
+        font-size: 18px;
+        padding: 5px;
+    }
+    
+    .nav-menu a:hover {
+        background-color: var(--primary-color) !important; /* Color al pasar el ratón por encima */
+        color: var(--text-color);
+        transform: scale(1.1); /* Agrandar el link ligeramente */
+    
+    }
+
+    .nav-menu a.active-link {
+        color: var(--text-color);
     }
 
     .main-content {

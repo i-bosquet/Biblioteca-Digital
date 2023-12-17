@@ -1,10 +1,32 @@
-// Variables globales
+// Variables globalesclose-btn
 let savedSearches = []; //busquedas guardadas
 let currentSearch = []; //búsqueda actual
-//let savedAdvancedSearches = []; // Búsquedas avanzadas guardadas
 const RESULTADOS_POR_PAGINA = 4; // Define la cantidad de resultados por página
 let paginaActual = 1; // Define la página actual
-let resultadosFiltrados = []; // de momento la mantenemos vacía por si la necesitamos más adelante
+
+// variables para llamadas al DOM
+//Botones
+const savedSearchesBtn = document.getElementById('savedSearchesBtn'); // Botón de FILTROS GUARDADOS
+const savedSearchesModalBtn = document.getElementById('savedSearchesModalBtn'); // Botón de FILTROS GUARDADOS del modal
+const infoBtn = document.getElementById('infoBtn'); // Botón de INFO
+const closeBtn = Array.from(document.getElementsByClassName('closeBtn')); // Botones de CERRAR el modal
+const saveFilterBtn = document.getElementById('saveFilterBtn'); // Botón de GUARDAR FILTRO
+const saveFilterModalBtn = document.getElementById('saveFilterModalBtn'); // Botón de GUARDAR FILTRO del modal
+const clearFiltersBtn = document.getElementById('clearFiltersBtn'); // Botón de LIMPIAR FILTROS
+const clearFiltersModalBtn = document.getElementById('clearFiltersModalBtn'); // Botón de LIMPIAR FILTROS del modal
+const searchBtn = document.getElementById("searchBtn"); // Botón de BÚSQUEDA
+const applyFilterBtn = document.getElementById('applyFilterBtn'); // Botón de APLICAR FILTRO
+const applyFilterModalBtn = document.getElementById('applyFilterModalBtn'); // Botón de APLICAR FILTRO del modal
+const advancedSearchBtn = document.getElementById('advancedSearchBtn'); // Botón de BÚSQUEDA AVANZADA
+//Otros
+const searchInput = document.getElementById('searchInput'); // Input de búsqueda principal
+const resultsList = document.getElementById('resultsList'); // Lista de resultados
+const filterContainer = document.getElementById('filterContainer'); // Contenedor de filtros
+const orderBy = document.getElementById('orderBy') // Select de ordenar por
+const paginacionContainer = document.getElementById('paginacionContainer'); // Contenedor de paginación
+const searchDescription = document.getElementById('searchDescription'); // Descripción de la búsqueda
+
+
 
 
 /*---------------
@@ -96,12 +118,35 @@ function isSearchSaved(searchTerm) {
 }
 
 // Función para manejar la solicitud de búsqueda
-function handleSearchRequest() {
-    const searchTerm = document.getElementById('searchInput').value.trim();
-    console.log("Término de busqueda: " + searchTerm); // Verifica el término de búsqueda
-    //verifica si el término de búsqueda es válido
+// Función para manejar la solicitud de búsqueda
+async function handleSearchRequest() {
+    const searchTerm = searchInput.value.trim();
+    console.log("Término de búsqueda: " + searchTerm); // Verifica el término de búsqueda
+
     if (searchTerm) {
-        displayResults(searchTerm); // Búsqueda normal
+        try {
+            // Espera a que los recursos se carguen.
+            const todosLosRecursos = await cargarRecursos();
+
+            // Recolectar criterios de búsqueda
+            const criterios = [{ campo: 'titulo', condicion: 'contains', termino: searchTerm }];
+            const orden = orderBy.value;
+
+            // Filtrar recursos
+            let resultados = buscarConCriterios(todosLosRecursos, criterios);
+
+            // Ordenar resultados si se ha especificado
+            if (orden) {
+                resultados = ordenarResultados(resultados, orden);
+            }
+
+            console.log("Resultados a mostrar:", resultados);
+
+            // Mostrar resultados
+            displayResults(searchTerm, resultados);
+        } catch (error) {
+            console.error("Error al realizar la búsqueda:", error);
+        }
     } else {
         showAlertMessage('Por favor, ingrese un término de búsqueda o use la búsqueda avanzada.');
     }
@@ -117,18 +162,10 @@ function isValidSearchTerm(searchTerm) {
    ----------------------------- */
 
 // Función para mostrar los resultados de búsqueda
-async function displayResults(searchTerm = '', criteriosBusquedaAvanzada = []) {
-    const recursos = await cargarRecursos();
-    const terminoBusqueda = searchTerm.toLowerCase();
+function displayResults(searchTerm = '', resultadosFiltrados = []) {
+    console.log("Mostrando resultados para:", searchTerm);
+    console.log("Resultados a mostrar:", resultadosFiltrados);
 
-    // Aplica la búsqueda avanzada si hay criterios, de lo contrario aplica la búsqueda normal
-    resultadosFiltrados = recursos.filter(recurso => {
-        return criteriosBusquedaAvanzada.length > 0
-            ? cumpleCriteriosAvanzados(recurso, criteriosBusquedaAvanzada)
-            : recurso.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              recurso.autor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              recurso.materia.toLowerCase().includes(searchTerm.toLowerCase());
-    });
     // Llama a paginarResultados aquí
     paginarResultados(resultadosFiltrados);
 
@@ -137,15 +174,15 @@ async function displayResults(searchTerm = '', criteriosBusquedaAvanzada = []) {
 
     // Oculta el botón de búsqueda avanzada en pantallas grandes
     if (isLargeScreen()) {
-        document.getElementById('advancedSearchBtn').style.display = 'none';
+        advancedSearchBtn.style.display = 'none';
     }
 }
 
 //resultados filtrados y los divide en páginas:
-function paginarResultados(resultados) {
-    const numeroDePaginas = Math.ceil(resultados.length / RESULTADOS_POR_PAGINA);
-    mostrarPagina(resultados, paginaActual);
-    mostrarControlesPaginacion(numeroDePaginas);
+function paginarResultados(resultadosFiltrados) {
+    const numeroDePaginas = Math.ceil(resultadosFiltrados.length / RESULTADOS_POR_PAGINA);
+    mostrarPagina(resultadosFiltrados, paginaActual);
+    mostrarControlesPaginacion(resultadosFiltrados, numeroDePaginas);
 }
 
 //muestra las páginas:
@@ -154,7 +191,6 @@ function mostrarPagina(resultados, numeroPagina) {
     const fin = inicio + RESULTADOS_POR_PAGINA;
     const resultadosPagina = resultados.slice(inicio, fin);
 
-    const resultsList = document.getElementById('resultsList');
     resultsList.innerHTML = ''; // Limpiar resultados anteriores
 
     if (resultadosPagina.length > 0) {
@@ -163,7 +199,7 @@ function mostrarPagina(resultados, numeroPagina) {
         });
     } else {
         // Si no hay resultados, muestra un mensaje
-        const busqueda = document.getElementById('searchInput').value.trim()
+        const busqueda = searchInput.value.trim()
         const noResultsMessage = document.createElement('li');
         noResultsMessage.textContent = `No se encontraron resultados para "${busqueda}".`;
         resultsList.appendChild(noResultsMessage);
@@ -192,9 +228,8 @@ function crearElementoLista(recurso) {
 }
 
 //Mostrar controles de pagina
-function mostrarControlesPaginacion(numeroDePaginas) {
-    const contenedorPaginacion = document.getElementById('paginacion');
-    contenedorPaginacion.innerHTML = ''; // Limpiar la paginación anterior
+function mostrarControlesPaginacion(resultadosFiltrados, numeroDePaginas) {
+    paginacionContainer.innerHTML = ''; // Limpiar la paginación anterior
 
     for (let i = 1; i <= numeroDePaginas; i++) {
         const botonPagina = document.createElement('button');
@@ -206,14 +241,14 @@ function mostrarControlesPaginacion(numeroDePaginas) {
             botonPagina.classList.add('pagina-actual');
         }
 
-        // Agregar un event listener para cambiar la página al hacer clic
+        // Actualizar el event listener para pasar los resultados filtrados
         botonPagina.addEventListener('click', function() {
             paginaActual = i;
-            mostrarPagina(resultadosFiltrados, i); 
-            mostrarControlesPaginacion(numeroDePaginas);
+            mostrarPagina(resultadosFiltrados, i);
+            mostrarControlesPaginacion(resultadosFiltrados, numeroDePaginas);
         });
 
-        contenedorPaginacion.appendChild(botonPagina);
+        paginacionContainer.appendChild(botonPagina);
     }
 }
 
@@ -245,25 +280,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Abre el modal de búsquedas guardadas
-document.getElementById('savedSearchesBtn').addEventListener('click', function () {
-    openModal('savedSearchesModal');
-});
-
 // Abre el modal de información
-document.getElementById('infoBtn').addEventListener('click', function () {
+infoBtn.addEventListener('click', function () {
     openModal('infoModal');
 });
 
 // Cierra el modal cuando se hace clic en el botón de cierre
-Array.from(document.getElementsByClassName('close-btn')).forEach(button => {
+Array.from(closeBtn).forEach(button => {
     button.addEventListener('click', function () {
         closeModal(this.closest('.modal').id);
     });
 });
 
 // Event listener para el botón de guardar búsqueda
-document.getElementById('saveSearchButton').addEventListener('click', function() {
+saveFilterBtn.addEventListener('click', function() {
     let currentSearchValues = getCriteriosBusquedaAvanzada();
     let searchAsString = JSON.stringify(currentSearchValues);
     let alreadySaved = savedSearches.some(savedSearch => JSON.stringify(savedSearch) === searchAsString);
@@ -282,10 +312,16 @@ document.getElementById('saveSearchButton').addEventListener('click', function()
     }
 });
 
-// Event listener para el boton de busqueda avanzada guardadas
-document.getElementById('savedSearchesAdvancedBtn').addEventListener('click', function() {
+// Event listener para el boton de filtros guardados
+savedSearchesBtn.addEventListener('click', function() {
     updateAdvancedSearchesModal();
-    openModal('advancedSearchesModal'); // Usa la función openModal para mostrar el modal
+    openModal('savedSearchesModal'); // Usa la función openModal para mostrar el modal
+});
+
+// Event listener para el boton de filtros guardados desde el modal
+savedSearchesModalBtn.addEventListener('click', function() {
+    updateAdvancedSearchesModal();
+    openModal('savedSearchesModal'); // Usa la función openModal para mostrar el modal
 });
 
 // Cierra el modal si se hace clic fuera de su contenido
@@ -296,34 +332,35 @@ window.onclick = function (event) {
 }
 
 // Event listener para el botón de limpiar filtros
-document.getElementById('clearFilters').addEventListener('click', function() {
+clearFiltersBtn.addEventListener('click', function() {
+    if (confirm('¿Estás seguro de que quieres limpiar todos los filtros?')) {
+        clearFilters();
+    }
+});
+
+// Event listener para el botón de limpiar filtros
+clearFiltersModalBtn.addEventListener('click', function() {
     if (confirm('¿Estás seguro de que quieres limpiar todos los filtros?')) {
         clearFilters();
     }
 });
 
 // Event listener para el botón de búsqueda
-document.getElementById("searchBtn").addEventListener("click", handleSearchRequest);
+searchBtn.addEventListener("click", handleSearchRequest);
 
 // Event listener para el campo de búsqueda
-document.getElementById('searchInput').addEventListener('input', function() {
+searchInput.addEventListener('input', function() {
     let searchValue = this.value;
 
     // Transfiere el valor actual del campo de búsqueda al primer input de los filtros
     transferCurrentSearchToFilter();
 
-    // // Oculta el contenedor de resultados y filtros si el campo de búsqueda cambia
-    // document.querySelector('.results-and-filters-container').style.display = 'none';
-    // // Muestra el botón de búsqueda avanzada en pantallas grandes
-    // if (isLargeScreen()) {
-    //     document.getElementById('advancedSearchBtn').style.display = 'inline-block';
-    // }
 });
 
-// Event listener para el botón de búsqueda avanzada
-document.getElementById('performSearch').addEventListener('click', handleSearchRequest);
+// Event listener para los botones de búsqueda
+applyFilterModalBtn.addEventListener('click', handleSearchRequest);
 
-document.getElementById('applyFilterButton').addEventListener('click', aplicarFiltro);
+applyFilterBtn.addEventListener('click', aplicarFiltro);
 
 
 /* ------------------------------
@@ -361,8 +398,8 @@ function translateValue(value) {
 
 // Función para guardar una nueva búsqueda
 function saveNewSearch() {
-    let searchDescription = document.getElementById('searchDescription').innerText;
-    let filterValues = getCriteriosBusquedaAvanzada();
+    searchDescription.innerText;
+    let filterValues = getCriteriosDeBusqueda();
     let searchToSave = { description: searchDescription, criteria: filterValues };
 
     let alreadySaved = savedSearches.some(savedSearch => 
@@ -464,7 +501,7 @@ function confirmAndDeleteSearch(index, buttonElement) {
 function selectSearch(search) {
     if (search.criteria.length === 1 && search.criteria[0][0] === 'any') {
         // Búsqueda simple
-        document.getElementById('searchInput').value = search.criteria[0][2];
+        searchInput.value = search.criteria[0][2];
     } else {
         // Búsqueda avanzada
         // Establecer los valores en los filtros de búsqueda avanzada
@@ -532,8 +569,8 @@ function createAdvancedDeleteButton(index) {
     deleteButton.onclick = function(event) {
         event.stopPropagation();
         // Obtiene la descripción de la búsqueda avanzada
-        let searchDescription = savedSearches[index].description;
-        let confirmDelete = confirm(`¿Eliminar la búsqueda avanzada "${searchDescription}"?`);
+        let description = savedSearches[index].description;
+        let confirmDelete = confirm(`¿Eliminar la búsqueda avanzada "${description}"?`);
         if (confirmDelete) {
             savedSearches.splice(index, 1); // Elimina usando el índice
             updateAdvancedSearchesModal();
@@ -572,10 +609,10 @@ function addFilter() {
     }
 }
 
-// Limpia todos los filtros dentro del contenedor 'filter-container'
+// Limpia todos los filtros dentro del contenedor 'filterContainer'
 function clearFilters() {
     // Encuentra el contenedor de filtros
-    let filterContainer = document.getElementById('filter-container');
+    let filterContainer = document.getElementById('filterContainer');
 
     // Limpia los inputs de texto
     let textInputs = filterContainer.querySelectorAll('input[type="text"]');
@@ -615,7 +652,7 @@ function isLargeScreen() {
 
 // Abre el modal de búsqueda avanzada y transfiere la búsqueda actual
 // Modifica el Event Listener para el botón de búsqueda avanzada
-document.getElementById('advancedSearchBtn').addEventListener('click', function () {
+advancedSearchBtn.addEventListener('click', function () {
     if (isLargeScreen()) {
         // En pantallas grandes, muestra el contenedor de filtros y resultados
         document.querySelector('.results-and-filters-container').style.display = 'flex';
@@ -633,7 +670,7 @@ document.getElementById('advancedSearchBtn').addEventListener('click', function 
 // Transfiere el valor de la búsqueda actual al modal de búsqueda avanzada
 function transferCurrentSearchToAdvancedModal() {
     // Obtén el valor actual del campo de búsqueda
-    let currentSearchValue = document.getElementById('searchInput').value;
+    let currentSearchValue = searchInput.value;
 
     // Encuentra el primer input de texto en el modal de búsqueda avanzada
     let advancedSearchInput = document.querySelector('#advancedSearchModal .filter-row input[type="text"]');
@@ -647,7 +684,7 @@ function transferCurrentSearchToAdvancedModal() {
 
 // Función para transferir el valor de la búsqueda actual al primer input de los filtros
 function transferCurrentSearchToFilter() {
-    let currentSearchValue = document.getElementById('searchInput').value;
+    let currentSearchValue = searchInput.value;
     // Selecciona el primer input de texto dentro del div .row en .search-filters
     let filterInput = document.querySelector('.search-filters .row input[type="text"]');
     if (filterInput) {
@@ -686,7 +723,7 @@ function updateSearchDescription() {
     });
 
     description += descriptions.join('  ');
-    document.getElementById('searchDescription').innerHTML = description;
+    searchDescription.innerHTML = description;
 }
 
 // Añade event listeners a los filtros y los inputs para actualizar la descripción en tiempo real
@@ -718,41 +755,33 @@ function toggleFiltersButton() {
     APLICAR FILTROS
     -------------------- */
 
-function getCriteriosBusquedaAvanzada() {
-    let criterios = [];
-    let searchTerm = document.getElementById('searchInput').value.trim();
+// function getCriteriosBusquedaAvanzada() {
+//     let criterios = [];
+//     let searchTerm = searchInput.value.trim();
 
-    if (searchTerm) {
-        criterios.push({ campo: 'searchTerm', condicion: 'contains', termino: searchTerm });
-    }
+//     if (searchTerm) {
+//         criterios.push({ campo: 'searchTerm', condicion: 'contains', termino: searchTerm });
+//     }
 
-    document.querySelectorAll('.search-filters .row').forEach(row => {
-        let campo = row.querySelector('.field-select').value;
-        let condicion = row.querySelector('.condition-select').value;
-        let termino = row.querySelector('input[type="text"]').value.trim();
+//     document.querySelectorAll('.search-filters .row').forEach(row => {
+//         let campo = row.querySelector('.field-select').value;
+//         let condicion = row.querySelector('.condition-select').value;
+//         let termino = row.querySelector('input[type="text"]').value.trim();
 
-        if (termino) {
-            criterios.push({ campo, condicion, termino });
-        }
-    });
+//         if (termino) {
+//             criterios.push({ campo, condicion, termino });
+//         }
+//     });
 
-    return criterios;
-}
+//     return criterios;
+// }
 
 function cumpleCriteriosAvanzados(recurso, criterios) {
     return criterios.every(criterio => {
-        // Usando un objeto para mapear campos a propiedades del recurso
-        const campoAMapeo = {
-            'title': recurso.titulo,
-            'author': recurso.autor,
-            'subject': recurso.materia
-            // Agrega más mapeos si son necesarios
-        };
+        // Obtiene el valor del recurso directamente usando el campo del criterio
+        const valorRecurso = recurso[criterio.campo];
 
-        // Obtiene el valor del recurso basado en el mapeo
-        const valorRecurso = campoAMapeo[criterio.campo];
-
-        // Si no hay un mapeo para el campo, retorna false
+        // Si el campo no existe en el recurso, retorna false
         if (valorRecurso === undefined) return false;
 
         // Verifica la condición para el valor del recurso
@@ -818,7 +847,7 @@ async function aplicarFiltro() {
 
         // Recolectar criterios de búsqueda
         const criterios = getCriteriosDeBusqueda();
-        const orden = document.getElementById('orderBy').value;
+        const orden = orderBy.value;
 
         // Filtrar recursos
         let resultados = buscarConCriterios(todosLosRecursos, criterios);
@@ -839,15 +868,43 @@ async function aplicarFiltro() {
 
 function getCriteriosDeBusqueda() {
     let criterios = [];
-    document.querySelectorAll('#filter-container .filter-row').forEach(row => {
-        let campo = row.querySelector('.field-select').value;
-        let condicion = row.querySelector('.condition-select').value;
-        let termino = row.querySelector('input[type="text"]').value.trim();
+    let rows = document.querySelectorAll('.search-filters .row');
+    
+    // Si hay filas en los filtros, usa la primera como término de búsqueda principal
+    if (rows.length > 0) {
+        let primerFiltro = rows[0];
+        let termino = primerFiltro.querySelector('input[type="text"]').value.trim();
 
         if (termino) {
-            criterios.push({ campo, condicion, termino });
+            criterios.push({ campo: 'titulo', condicion: 'contains', termino: termino });
         }
-    });
+    }
+
+    // Recolecta los criterios de los filtros adicionales si hay más de una fila
+    if (rows.length > 1) {
+        rows.forEach((row, index) => {
+            // Ignora la primera fila ya que se usó como término de búsqueda principal
+            if (index > 0) {
+                let campo = row.querySelector('.field-select').value;
+                let condicion = row.querySelector('.condition-select').value;
+                let termino = row.querySelector('input[type="text"]').value.trim();
+
+                // Mapeo de los campos a las claves del objeto recurso
+                const mapeoCampo = {
+                    'title': 'titulo',
+                    'author': 'autor',
+                    'subject': 'materia'
+                    // Agrega más mapeos si son necesarios
+                };
+
+                let campoMapeado = mapeoCampo[campo] || campo;
+
+                if (termino && campo !== 'any') {
+                    criterios.push({ campo: campoMapeado, condicion, termino });
+                }
+            }
+        });
+    }
 
     console.log("Criterios de búsqueda recolectados:", criterios);
     return criterios;
