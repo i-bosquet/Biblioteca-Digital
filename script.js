@@ -1,4 +1,5 @@
 // Variables globalesclose-btn
+let datosRecursos = []; // Recursos cargados desde el JSON
 let savedSearches = []; //busquedas guardadas
 let currentSearch = []; //búsqueda actual
 const RESULTADOS_POR_PAGINA = 4; // Define la cantidad de resultados por página
@@ -23,10 +24,9 @@ const searchInput = document.getElementById('searchInput'); // Input de búsqued
 const resultsList = document.getElementById('resultsList'); // Lista de resultados
 const filterContainer = document.getElementById('filterContainer'); // Contenedor de filtros
 const orderBy = document.getElementById('orderBy') // Select de ordenar por
+const selectCatalog = document.getElementById('selectCatalog')
 const paginacionContainer = document.getElementById('paginacionContainer'); // Contenedor de paginación
 const searchDescription = document.getElementById('searchDescription'); // Descripción de la búsqueda
-
-
 
 
 /*---------------
@@ -67,8 +67,9 @@ async function cargarRecursos() {
             throw new Error('Error al cargar los recursos');
         }
         const datos = await respuesta.json();
+        datosRecursos = datos.recursos; // Guardar en la variable global
         procesarDatos(datos.recursos); // Procesar los datos para llenar los selectores
-        console.log("Datos cargados:", datos.recursos); // Verifica los datos cargados
+        console.log("Datos cargados:", datosRecursos); // Verifica los datos cargados
         return datos.recursos;
     } catch (error) {
         console.error("Error al cargar los recursos:", error);
@@ -355,6 +356,11 @@ searchInput.addEventListener('input', function() {
     // Transfiere el valor actual del campo de búsqueda al primer input de los filtros
     transferCurrentSearchToFilter();
 
+});
+
+// Event listener para el selectpr de catalogo 
+selectCatalog.addEventListener('change', function() {
+    console.log("Nuevo valor seleccionado en el catálogo:", this.value);
 });
 
 // Event listener para los botones de búsqueda
@@ -755,27 +761,6 @@ function toggleFiltersButton() {
     APLICAR FILTROS
     -------------------- */
 
-// function getCriteriosBusquedaAvanzada() {
-//     let criterios = [];
-//     let searchTerm = searchInput.value.trim();
-
-//     if (searchTerm) {
-//         criterios.push({ campo: 'searchTerm', condicion: 'contains', termino: searchTerm });
-//     }
-
-//     document.querySelectorAll('.search-filters .row').forEach(row => {
-//         let campo = row.querySelector('.field-select').value;
-//         let condicion = row.querySelector('.condition-select').value;
-//         let termino = row.querySelector('input[type="text"]').value.trim();
-
-//         if (termino) {
-//             criterios.push({ campo, condicion, termino });
-//         }
-//     });
-
-//     return criterios;
-// }
-
 function cumpleCriteriosAvanzados(recurso, criterios) {
     return criterios.every(criterio => {
         // Obtiene el valor del recurso directamente usando el campo del criterio
@@ -842,15 +827,17 @@ function ordenarResultados(resultados, orden) {
 
 async function aplicarFiltro() {
     try {
-        // Espera a que los recursos se carguen.
-        const todosLosRecursos = await cargarRecursos();
 
         // Recolectar criterios de búsqueda
         const criterios = getCriteriosDeBusqueda();
         const orden = orderBy.value;
 
+        console.log("Criterios de búsqueda recolectados antes de buscar conCriterios en la función aplicarFiltro :", criterios);
+
+        console.log("todosLosRecursos recolectados antes de buscar conCriterios en la función aplicarFiltro :", criterios);
+
         // Filtrar recursos
-        let resultados = buscarConCriterios(todosLosRecursos, criterios);
+        let resultados = buscarConCriterios(datosRecursos, criterios);
 
         // Ordenar resultados si se ha especificado
         if (orden) {
@@ -870,6 +857,14 @@ function getCriteriosDeBusqueda() {
     let criterios = [];
     let rows = document.querySelectorAll('.search-filters .row');
     
+    // Recolecta el valor del filtro de catálogo
+    let catalogoSeleccionado = selectCatalog.value;
+    console.log("Catálogo seleccionado:", catalogoSeleccionado); // Añadido para depuración
+    
+    if (catalogoSeleccionado && catalogoSeleccionado !== 'Todos los catálogos') {
+        criterios.push({ campo: 'catalogo', condicion: 'is', termino: catalogoSeleccionado });
+    }
+
     // Si hay filas en los filtros, usa la primera como término de búsqueda principal
     if (rows.length > 0) {
         let primerFiltro = rows[0];
