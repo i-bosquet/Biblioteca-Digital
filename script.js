@@ -927,8 +927,21 @@ function buscarConCriterios(recursos, criterios) {
 
 function ordenarResultados(resultados, orden) {
     return resultados.sort((a, b) => {
-        let valorA = a[orden].toLowerCase();
-        let valorB = b[orden].toLowerCase();
+        let valorA = a[orden];
+        let valorB = b[orden];
+
+        // Verificar si estamos tratando con fechas
+        if (orden === 'fecha_publicacion') {
+            // Asumiendo que las fechas están en formato de cadena YYYY-MM-DD
+            // Convertir a objetos Date para comparar
+            valorA = new Date(valorA);
+            valorB = new Date(valorB);
+        } else {
+            // Convertir a minúsculas si es una cadena
+            valorA = typeof valorA === 'string' ? valorA.toLowerCase() : valorA;
+            valorB = typeof valorB === 'string' ? valorB.toLowerCase() : valorB;
+        }
+
         if (valorA < valorB) {
             return -1;
         }
