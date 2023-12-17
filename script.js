@@ -1,4 +1,4 @@
-// Variables globalesclose-btn
+// Variables globales
 let datosRecursos = []; // Recursos cargados desde el JSON
 let savedSearches = []; //busquedas guardadas
 let currentSearch = []; //búsqueda actual
@@ -118,41 +118,6 @@ function isSearchSaved(searchTerm) {
     return savedSearches.some(savedSearch => JSON.stringify(savedSearch) === JSON.stringify(search));
 }
 
-// Función para manejar la solicitud de búsqueda
-// Función para manejar la solicitud de búsqueda
-async function handleSearchRequest() {
-    const searchTerm = searchInput.value.trim();
-    console.log("Término de búsqueda: " + searchTerm); // Verifica el término de búsqueda
-
-    if (searchTerm) {
-        try {
-            // Espera a que los recursos se carguen.
-            const todosLosRecursos = await cargarRecursos();
-
-            // Recolectar criterios de búsqueda
-            const criterios = [{ campo: 'titulo', condicion: 'contains', termino: searchTerm }];
-            const orden = orderBy.value;
-
-            // Filtrar recursos
-            let resultados = buscarConCriterios(todosLosRecursos, criterios);
-
-            // Ordenar resultados si se ha especificado
-            if (orden) {
-                resultados = ordenarResultados(resultados, orden);
-            }
-
-            console.log("Resultados a mostrar:", resultados);
-
-            // Mostrar resultados
-            displayResults(searchTerm, resultados);
-        } catch (error) {
-            console.error("Error al realizar la búsqueda:", error);
-        }
-    } else {
-        showAlertMessage('Por favor, ingrese un término de búsqueda o use la búsqueda avanzada.');
-    }
-}
-
 // Función para validar el término de búsqueda
 function isValidSearchTerm(searchTerm) {
     return searchTerm !== '';
@@ -212,6 +177,10 @@ function mostrarPagina(resultados, numeroPagina) {
 function crearElementoLista(recurso) {
     const resultItem = document.createElement("li");
     resultItem.className = "search-result-item";
+
+    // Determinar la clase de disponibilidad basada en el valor de recurso.disponibilidad
+    const availabilityClass = recurso.disponibilidad ? 'available' : 'not-available';
+
     resultItem.innerHTML = `
         <div class="result-cover"><img src="${recurso.portada}" alt="Portada"></div>
         <div class="result-info">
@@ -221,10 +190,10 @@ function crearElementoLista(recurso) {
                 <button class="action-btn" title="Guardar"><i class="fas fa-save"></i></button>
                 <button class="action-btn" title="Más opciones"><i class="fas fa-ellipsis-h"></i></button>
             </div>
-            <div class="result-format">${recurso.formato_recurso}</div>
+            <div class="result-format">${recurso.formato_recurso} - <span>${recurso.materia} </span></div>
             <div class="result-title">${recurso.titulo}</div>
             <div class="result-author">${recurso.autor} - ${recurso.editorial}, ${recurso.fecha_publicacion}</div>
-            <div class="result-availability">${recurso.disponibilidad ? '<i class="fas fa-check"></i> Disponible' : '<i class="fas fa-times"></i> No Disponible'}</div>
+            <div class="result-availability">${recurso.disponibilidad ? '<strong class="available"> <i class="fas fa-check"></i> Disponible'  : '<strong class="not-available"><i class="fas fa-times"></i> No Disponible'} - ${recurso.localizacion} </strong></div>
         </div>`;
     return resultItem;
 }
@@ -347,7 +316,8 @@ clearFiltersModalBtn.addEventListener('click', function() {
     }
 });
 
-
+// Event listener para el botón de búsqueda
+searchBtn.addEventListener("click", aplicarFiltro);
 
 // Event listener para el campo de búsqueda
 searchInput.addEventListener('input', function() {
@@ -363,12 +333,7 @@ selectCatalog.addEventListener('change', function() {
     console.log("Nuevo valor seleccionado en el catálogo:", this.value);
 });
 
-
-
 // Event listener para los botones de búsqueda
-
-searchBtn.addEventListener("click", aplicarFiltro);
-
 applyFilterModalBtn.addEventListener('click', aplicarFiltro);
 
 applyFilterBtn.addEventListener('click', aplicarFiltro);
@@ -619,8 +584,6 @@ function addFilter() {
         previousLogicSelect.classList.remove('logic-select');
     }
 }
-
-// Limpia todos los filtros dentro del contenedor 'filterContainer'
 function clearFilters() {
     // Encuentra el contenedor de filtros
     let filterContainer = document.getElementById('filterContainer');
@@ -643,13 +606,15 @@ function clearFilters() {
 
     // Restablece los inputs de tipo fecha
     let dateInputs = filterContainer.querySelectorAll('input[type="date"]');
-    dateInputs.forEach(function(input) {
+    dateInputs.forEach(function (input) {
         input.value = ''; // Esto restablecerá la fecha a un estado vacío
     });
 
-    // Si hay otras filas de filtros adicionales, remuévelas
-    let additionalFilterRows = filterContainer.querySelectorAll('.filter-row:not(:first-child)');
-    additionalFilterRows.forEach(function(row) {
+    // Solo elimina las filas adicionales, dejando intacta la primera fila
+    let additionalFilterRows = Array.from(filterContainer.querySelectorAll('.row'));
+    additionalFilterRows.shift(); // Elimina la primera fila del array
+    console.log("Filas adicionales a eliminar:", additionalFilterRows);
+    additionalFilterRows.forEach(function (row) {
         row.remove();
     });
 
@@ -743,7 +708,7 @@ function addEventListenersToFilters() {
         element.addEventListener('change', function() {
             updateSearchDescription();
             // Si el elemento es un .logic-select y su valor no es el por defecto, añadir un nuevo filtro
-            if (element.classList.contains('logic-select') && element.value !== '') {
+            if (element.classList.contains('logic-select') && element.value !== '+ LíNEA') {
                 this.classList.remove('logic-select');
                 addFilter();
             }
@@ -809,9 +774,13 @@ function ordenarResultados(resultados, orden) {
 
 async function aplicarFiltro() {
     try {
-        // Espera a que los recursos se carguen.
-        const todosLosRecursos = await cargarRecursos();
-        console.log("Recursos cargados en aplicarFiltro:", todosLosRecursos);
+        // Si los recursos aún no se han cargado, cárgalos.
+        if (datosRecursos.length === 0) {
+            await cargarRecursos();
+        }
+
+        // Utiliza 'datosRecursos' en lugar de cargar los recursos nuevamente.
+        console.log("Utilizando datosRecursos en aplicarFiltro:", datosRecursos);
 
         // Recolectar criterios de búsqueda
         const criterios = getCriteriosDeBusqueda();
@@ -825,7 +794,7 @@ async function aplicarFiltro() {
         });
 
         // Filtrar recursos
-        let resultados = buscarConCriterios(todosLosRecursos, criterios);
+        let resultados = buscarConCriterios(datosRecursos, criterios);
         console.log("Resultados después de aplicar criterios:", resultados);
 
         // Ordenar resultados si se ha especificado
@@ -857,6 +826,8 @@ function getCriteriosDeBusqueda() {
         let campo = row.querySelector('.field-select').value;
         let condicion = row.querySelector('.condition-select').value;
         let termino = row.querySelector('input[type="text"]').value.trim();
+        let operadorLogicoElement = row.querySelector('.logicSelect');
+        let operadorLogico = operadorLogicoElement && operadorLogicoElement.value !== '+ LíNEA' ? operadorLogicoElement.value : null;
 
         // Mapeo de los campos a las claves del objeto recurso
         const mapeoCampo = {
@@ -869,7 +840,11 @@ function getCriteriosDeBusqueda() {
         let campoMapeado = mapeoCampo[campo] || campo;
 
         if (termino) {
-            criterios.push({ campo: campoMapeado, condicion, termino });
+            let criterio = { campo: campoMapeado, condicion, termino };
+            if (operadorLogico) {
+                criterio.operadorLogico = operadorLogico;
+            }
+            criterios.push(criterio);
         }
     });
 
@@ -879,25 +854,60 @@ function getCriteriosDeBusqueda() {
 
 function buscarConCriterios(recursos, criterios) {
     return recursos.filter(recurso => {
-        return criterios.every(criterio => {
-            if (criterio.campo === 'any') {
-                // Campos específicos para buscar cuando el criterio es 'any'
-                const camposParaBuscar = ['titulo', 'autor', 'materia'];
+        let cumple = false; // Inicialmente, suponemos que no cumple con los criterios
 
-                // Comprueba si algún campo especificado del recurso cumple con la condición
-                return camposParaBuscar.some(clave => {
-                    if (typeof recurso[clave] === 'string') {
-                        return verificaCondicion(recurso[clave], criterio.condicion, criterio.termino);
-                    }
-                    return false;
-                });
+        for (let i = 0; i < criterios.length; i++) {
+            const criterioActual = criterios[i];
+            const cumpleCriterioActual = verificaCondicionRecurso(recurso, criterioActual);
+
+            if (i === 0) {
+                // Para el primer criterio, simplemente asignamos el valor
+                cumple = cumpleCriterioActual;
             } else {
-                // Procesamiento normal para campos específicos
-                const valor = recurso[criterio.campo];
-                return verificaCondicion(valor, criterio.condicion, criterio.termino);
+                // Para los criterios siguientes, aplicamos el operador lógico
+                const operadorLogicoAnterior = criterios[i - 1].operadorLogico;
+
+                switch (operadorLogicoAnterior) {
+                    case "or":
+                        cumple = cumple || cumpleCriterioActual;
+                        break;
+                    case "and":
+                        cumple = cumple && cumpleCriterioActual;
+                        break;
+                    case "not":
+                        cumple = cumple && !cumpleCriterioActual;
+                        break;
+                    default:
+                        // Si el operador lógico no está definido o no es válido, se asume "y"
+                        cumple = cumple && cumpleCriterioActual;
+                }
             }
-        });
+        }
+
+        return cumple;
     });
+}
+
+function verificaCondicionRecurso(recurso, criterio) {
+    if (criterio.campo === 'any') {
+        const camposParaBuscar = ['titulo', 'autor', 'materia'];
+        return camposParaBuscar.some(clave => verificaCondicion(recurso[clave], criterio.condicion, criterio.termino));
+    } else {
+        return verificaCondicion(recurso[criterio.campo], criterio.condicion, criterio.termino);
+    }
+}
+
+function verificaCondicion(valorCampo, condicion, termino) {
+    switch (condicion) {
+        case 'contains':
+            return valorCampo.toLowerCase().includes(termino.toLowerCase());
+        case 'is':
+            return valorCampo.toLowerCase() === termino.toLowerCase();
+        case 'starts_with':
+            return valorCampo.toLowerCase().startsWith(termino.toLowerCase());
+        default:
+            return false;
+    }
 }
 
 function ordenarResultados(resultados, orden) {

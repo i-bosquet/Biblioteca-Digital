@@ -508,16 +508,21 @@ h2 {
 }
 
 .result-format {
-    font-style: italic;
-    color: #888;
+    color: var(--primary-color);
     text-transform: uppercase;
     font-weight: bold;
+    font-size: .8em;
+    margin-bottom: 10px;
+}
+
+.result-materia {
+    font-style: italic;
+    color: #888;
 }
 
 .result-title {
     font-size: 1.2em;
     font-weight: bold;
-    margin-bottom: 10px;
 }
 
 .result-author, .result-availability {
@@ -525,8 +530,12 @@ h2 {
     color: #555;
 }
 
-.result-availability i {
+.available {
     color: green;
+}
+
+.not-available {
+    color: red;
 }
 
 /* Iconos de acciones */
