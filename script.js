@@ -50,15 +50,12 @@ function procesarDatos(recursos) {
     rellenarSelector('language', idiomas, "Todos los idiomas");
 }
 
-
 function obtenerValoresUnicos(recursos, campo) {
     // Mantén la capitalización original del JSON
     const valores = recursos.map(item => item[campo].trim());
     const unicos = new Set(valores);
     return Array.from(unicos).sort();
 }
-
-
 
 // Función para cargar los datos de recursos.json
 async function cargarRecursos() {
@@ -829,22 +826,33 @@ function getCriteriosDeBusqueda() {
     let criterios = [];
     let rows = document.querySelectorAll('.search-filters .row');
 
-    // Recolecta el valor del filtro de catálogo
-    let catalogoSeleccionado = selectCatalog.value;
-    if (catalogoSeleccionado && catalogoSeleccionado !== 'Todos los catálogos') {
-        criterios.push({ campo: 'catalogo', condicion: 'is', termino: catalogoSeleccionado });
-    }
-
     // Recolecta el valor del filtro de localización y mapea a los valores del JSON
     let localizacionSeleccionada = document.getElementById('locationFilter').value;
     const mapeoLocalizacion = {
         'en_linea': 'En linea',
         'en_biblioteca': 'En biblioteca'
     };
+
     if (localizacionSeleccionada && localizacionSeleccionada !== 'any') {
         let terminoLocalizacion = mapeoLocalizacion[localizacionSeleccionada] || localizacionSeleccionada;
         criterios.push({ campo: 'localizacion', condicion: 'is', termino: terminoLocalizacion });
     }
+
+    // Recolecta el valor del filtro de catálogo, localización, y otros filtros adicionales
+    let catalogoSeleccionado = selectCatalog.value;
+    let formatoSeleccionado = document.getElementById('format').value;
+    let materiaSeleccionada = document.getElementById('subject').value;
+    let autorSeleccionado = document.getElementById('author').value;
+    let editorialSeleccionada = document.getElementById('publisher').value;
+    let idiomaSeleccionado = document.getElementById('language').value;
+
+    agregarCriterioSiDiferente(criterios, catalogoSeleccionado, 'catalogo', 'Todos los catálogos');
+    agregarCriterioSiDiferente(criterios, formatoSeleccionado, 'formato_recurso', 'Todos los formatos');
+    agregarCriterioSiDiferente(criterios, materiaSeleccionada, 'materia', 'Todas las materias');
+    agregarCriterioSiDiferente(criterios, autorSeleccionado, 'autor', 'Todos los autores');
+    agregarCriterioSiDiferente(criterios, editorialSeleccionada, 'editorial', 'Todas las editoriales');
+    agregarCriterioSiDiferente(criterios, idiomaSeleccionado, 'idioma', 'Todos los idiomas');
+
 
     // Recolecta los criterios de búsqueda de cada fila de filtros
     rows.forEach(row => {
@@ -881,6 +889,13 @@ function getCriteriosDeBusqueda() {
     console.log("Criterios de búsqueda recolectados:", criterios);
     return criterios;
 }
+
+function agregarCriterioSiDiferente(criterios, valor, campo, textoPorDefecto, condicion = 'is') {
+    if (valor && valor !== textoPorDefecto) {
+        criterios.push({ campo, condicion, termino: valor });
+    }
+}
+
 
 function buscarConCriterios(recursos, criterios) {
     return recursos.filter(recurso => {
