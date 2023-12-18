@@ -853,7 +853,19 @@ function getCriteriosDeBusqueda() {
     agregarCriterioSiDiferente(criterios, editorialSeleccionada, 'editorial', 'Todas las editoriales');
     agregarCriterioSiDiferente(criterios, idiomaSeleccionado, 'idioma', 'Todos los idiomas');
 
+     // Recolectar criterios de fecha
+    let fechaInicio = document.getElementById('dateIni').value;
+    let fechaFin = document.getElementById('dateEnd').value;
 
+    if (fechaInicio) {
+        let añoInicio = new Date(fechaInicio).getFullYear().toString(); // Convertir a cadena
+        criterios.push({ campo: 'fecha_publicacion', condicion: '>=', termino: añoInicio });
+    }
+
+    if (fechaFin) {
+        let añoFin = new Date(fechaFin).getFullYear().toString(); // Convertir a cadena
+        criterios.push({ campo: 'fecha_publicacion', condicion: '<=', termino: añoFin });
+    }
     // Recolecta los criterios de búsqueda de cada fila de filtros
     rows.forEach(row => {
         let campo = row.querySelector('.field-select').value;
@@ -904,6 +916,7 @@ function buscarConCriterios(recursos, criterios) {
         for (let i = 0; i < criterios.length; i++) {
             const criterioActual = criterios[i];
             const cumpleCriterioActual = verificaCondicionRecurso(recurso, criterioActual);
+            console.log(`Recurso: ${recurso.titulo}, Criterio: ${JSON.stringify(criterioActual)}, Cumple: ${cumpleCriterioActual}`);
 
             if (i === 0) {
                 // Para el primer criterio, simplemente asignamos el valor
@@ -937,16 +950,38 @@ function verificaCondicionRecurso(recurso, criterio) {
     if (criterio.campo === 'any') {
         const camposParaBuscar = ['titulo', 'autor', 'materia'];
         return camposParaBuscar.some(clave => verificaCondicion(recurso[clave], criterio.condicion, criterio.termino));
+    } else if (criterio.campo === 'fecha_publicacion') {
+        // Convertir el año de publicación a un número para la comparación
+        let añoPublicacion = parseInt(recurso.fecha_publicacion, 10);
+        return verificaCondicion(añoPublicacion, criterio.condicion, parseInt(criterio.termino, 10));
     } else {
         return verificaCondicion(recurso[criterio.campo], criterio.condicion, criterio.termino);
     }
 }
 
 function verificaCondicion(valorCampo, condicion, termino) {
+    console.log("Verificando condición:", valorCampo, condicion, termino);
     // Si estamos tratando con un valor booleano, compáralo directamente
     if (typeof valorCampo === "boolean") {
         return condicion === 'is' && valorCampo === termino;
     }
+
+    // Convertir a números si ambos valores son numéricos (ej. fechas)
+    if (!isNaN(valorCampo) && !isNaN(termino)) {
+        valorCampo = Number(valorCampo);
+        termino = Number(termino);
+
+        switch (condicion) {
+            case '>=':
+                return valorCampo >= termino;
+            case '<=':
+                return valorCampo <= termino;
+            // Puedes añadir más condiciones numéricas si son necesarias
+            default:
+                return false;
+        }
+    }
+
 
     // Si es una cadena, convertirla a minúsculas para la comparación
     if (typeof valorCampo === "string") {
