@@ -127,7 +127,6 @@ function isValidSearchTerm(searchTerm) {
 
 // Función para mostrar los resultados de búsqueda
 function displayResults(searchTerm = '', resultadosFiltrados = []) {
-    console.log("Mostrando resultados para:", searchTerm);
     console.log("Resultados a mostrar:", resultadosFiltrados);
 
     // Llama a paginarResultados aquí
@@ -263,33 +262,42 @@ Array.from(closeBtn).forEach(button => {
 
 // Event listener para el botón de guardar búsqueda
 saveFilterBtn.addEventListener('click', function() {
-    let currentSearchValues = getCriteriosBusquedaAvanzada();
+    // Obtener los criterios de búsqueda actuales
+    let currentSearchValues = getCriteriosDeBusqueda();
+
+    // Convertir los criterios a un string para comparar
     let searchAsString = JSON.stringify(currentSearchValues);
-    let alreadySaved = savedSearches.some(savedSearch => JSON.stringify(savedSearch) === searchAsString);
+
+    // Verificar si la búsqueda ya está guardada
+    let alreadySaved = savedSearches.some(savedSearch => JSON.stringify(savedSearch.criteria) === searchAsString);
 
     if (!alreadySaved) {
-        savedSearches.push(currentSearchValues);
+        // Crear un objeto de búsqueda para guardar
+        let searchToSave = { description: searchDescription.innerText, criteria: currentSearchValues };
+
+        // Guardar la búsqueda
+        savedSearches.push(searchToSave);
+
+        // Actualizar el modal de búsquedas guardadas
         updateSavedSearchesModal();
-        if (confirm('¿Quieres guardar este filtro o búsqueda?')) {
-            // Guarda la búsqueda
-            showConfirmationMessage('El filtro o la búsqueda se ha guardado correctamente.');
-        } else {
-            // No hagas nada
-        }
+
+        // Mostrar mensaje de confirmación
+        showConfirmationMessage('El filtro o la búsqueda se ha guardado correctamente.');
     } else {
+        // Mostrar mensaje de alerta si ya está guardado
         showAlertMessage('Este filtro o búsqueda ya está guardado.');
     }
 });
 
 // Event listener para el boton de filtros guardados
 savedSearchesBtn.addEventListener('click', function() {
-    updateAdvancedSearchesModal();
+    updateSavedSearchesModal();
     openModal('savedSearchesModal'); // Usa la función openModal para mostrar el modal
 });
 
 // Event listener para el boton de filtros guardados desde el modal
 savedSearchesModalBtn.addEventListener('click', function() {
-    updateAdvancedSearchesModal();
+    updateSavedSearchesModal();
     openModal('savedSearchesModal'); // Usa la función openModal para mostrar el modal
 });
 
@@ -374,7 +382,7 @@ function translateValue(value) {
 function saveNewSearch() {
     searchDescription.innerText;
     let filterValues = getCriteriosDeBusqueda();
-    let searchToSave = { description: searchDescription, criteria: filterValues };
+    let searchToSave = { description: searchDescription.innerText, criteria: filterValues }; // Asegúrate de que solo el texto se esté guardando
 
     let alreadySaved = savedSearches.some(savedSearch => 
         JSON.stringify(savedSearch.criteria) === JSON.stringify(filterValues)
@@ -419,8 +427,12 @@ function updateSavedSearchesModal() {
     let message = document.getElementById('noSavedSearchMessage');
     list.innerHTML = '';
     message.style.display = savedSearches.length === 0 ? 'block' : 'none';
+
+    console.log("Búsquedas guardadas:", savedSearches); // Para depuración
+
     savedSearches.forEach((search, index) => {
-        if (search && search.description && search.description.trim() !== '') { // Verifica si search, search.description existen y si la descripción no está vacía
+        console.log("Creando ítem para:", search.description); // Para depuración
+        if (search && typeof search.description === 'string' && search.description.trim() !== '') {
             let listItem = createSearchListItem(search, index);
             list.appendChild(listItem);
         }
@@ -492,10 +504,10 @@ function selectSearch(search) {
    --------------------------- */
 
 // Actualiza el modal de búsquedas avanzadas
-function updateAdvancedSearchesModal() {
+function updateSearchesModal() {
     let list = document.getElementById('advancedSavedSearchList');
     list.innerHTML = '';
-    savedAdvancedSearches.forEach((search, index) => {
+    savedSearches.forEach((search, index) => {
         let listItem = document.createElement('li');
         listItem.textContent = search.description;
         listItem.classList.add('saved-search-item');
@@ -916,7 +928,7 @@ function buscarConCriterios(recursos, criterios) {
         for (let i = 0; i < criterios.length; i++) {
             const criterioActual = criterios[i];
             const cumpleCriterioActual = verificaCondicionRecurso(recurso, criterioActual);
-            console.log(`Recurso: ${recurso.titulo}, Criterio: ${JSON.stringify(criterioActual)}, Cumple: ${cumpleCriterioActual}`);
+            //console.log(`Recurso: ${recurso.titulo}, Criterio: ${JSON.stringify(criterioActual)}, Cumple: ${cumpleCriterioActual}`);
 
             if (i === 0) {
                 // Para el primer criterio, simplemente asignamos el valor
@@ -960,7 +972,7 @@ function verificaCondicionRecurso(recurso, criterio) {
 }
 
 function verificaCondicion(valorCampo, condicion, termino) {
-    console.log("Verificando condición:", valorCampo, condicion, termino);
+    //console.log("Verificando condición:", valorCampo, condicion, termino);
     // Si estamos tratando con un valor booleano, compáralo directamente
     if (typeof valorCampo === "boolean") {
         return condicion === 'is' && valorCampo === termino;
