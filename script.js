@@ -835,6 +835,17 @@ function getCriteriosDeBusqueda() {
         criterios.push({ campo: 'catalogo', condicion: 'is', termino: catalogoSeleccionado });
     }
 
+    // Recolecta el valor del filtro de localización y mapea a los valores del JSON
+    let localizacionSeleccionada = document.getElementById('locationFilter').value;
+    const mapeoLocalizacion = {
+        'en_linea': 'En linea',
+        'en_biblioteca': 'En biblioteca'
+    };
+    if (localizacionSeleccionada && localizacionSeleccionada !== 'any') {
+        let terminoLocalizacion = mapeoLocalizacion[localizacionSeleccionada] || localizacionSeleccionada;
+        criterios.push({ campo: 'localizacion', condicion: 'is', termino: terminoLocalizacion });
+    }
+
     // Recolecta los criterios de búsqueda de cada fila de filtros
     rows.forEach(row => {
         let campo = row.querySelector('.field-select').value;
