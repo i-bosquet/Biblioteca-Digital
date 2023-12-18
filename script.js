@@ -27,6 +27,7 @@ const orderBy = document.getElementById('orderBy') // Select de ordenar por
 const selectCatalog = document.getElementById('selectCatalog')
 const paginacionContainer = document.getElementById('paginacionContainer'); // Contenedor de paginación
 const searchDescription = document.getElementById('searchDescription'); // Descripción de la búsqueda
+const availableOnlyCheckbox = document.getElementById('availableOnly'); // Checkbox de solo disponibles
 
 
 /*---------------
@@ -585,6 +586,11 @@ function addFilter() {
     }
 }
 function clearFilters() {
+    // Limpia el campo de búsqueda principal
+    if (searchInput) {
+        searchInput.value = '';
+    }
+
     // Encuentra el contenedor de filtros
     let filterContainer = document.getElementById('filterContainer');
 
@@ -604,6 +610,11 @@ function clearFilters() {
         }
     });
 
+    // Restablece el checkbox de disponibilidad
+    if (availableOnlyCheckbox) {
+        availableOnlyCheckbox.checked = false;
+    }
+
     // Restablece los inputs de tipo fecha
     let dateInputs = filterContainer.querySelectorAll('input[type="date"]');
     dateInputs.forEach(function (input) {
@@ -617,6 +628,9 @@ function clearFilters() {
     additionalFilterRows.forEach(function (row) {
         row.remove();
     });
+
+    // Limpia los resultados anteriores
+    resultsList.innerHTML = '';
 
     updateSearchDescription(); // Actualiza la descripción de la búsqueda
 }
@@ -788,8 +802,8 @@ async function aplicarFiltro() {
 
         // Verifica si hay algún criterio no válido
         criterios.forEach(criterio => {
-            if (typeof criterio.termino !== 'string') {
-                console.error("Error: término de criterio no es una cadena:", criterio);
+            if (typeof criterio.termino !== 'string' && typeof criterio.termino !== 'boolean') {
+                console.error("Error: término de criterio no es una cadena ni un booleano:", criterio);
             }
         });
 
@@ -848,6 +862,11 @@ function getCriteriosDeBusqueda() {
         }
     });
 
+    // Añadir criterio de disponibilidad si el checkbox está marcado
+    if (availableOnlyCheckbox.checked) {
+        criterios.push({ campo: 'disponibilidad', condicion: 'is', termino: true }); // Usa el valor booleano true aquí
+    }
+
     console.log("Criterios de búsqueda recolectados:", criterios);
     return criterios;
 }
@@ -898,16 +917,26 @@ function verificaCondicionRecurso(recurso, criterio) {
 }
 
 function verificaCondicion(valorCampo, condicion, termino) {
-    switch (condicion) {
-        case 'contains':
-            return valorCampo.toLowerCase().includes(termino.toLowerCase());
-        case 'is':
-            return valorCampo.toLowerCase() === termino.toLowerCase();
-        case 'starts_with':
-            return valorCampo.toLowerCase().startsWith(termino.toLowerCase());
-        default:
-            return false;
+    // Si estamos tratando con un valor booleano, compáralo directamente
+    if (typeof valorCampo === "boolean") {
+        return condicion === 'is' && valorCampo === termino;
     }
+
+    // Si es una cadena, convertirla a minúsculas para la comparación
+    if (typeof valorCampo === "string") {
+        switch (condicion) {
+            case 'contains':
+                return valorCampo.toLowerCase().includes(termino.toLowerCase());
+            case 'is':
+                return valorCampo.toLowerCase() === termino.toLowerCase();
+            case 'starts_with':
+                return valorCampo.toLowerCase().startsWith(termino.toLowerCase());
+            default:
+                return false;
+        }
+    }
+
+    return false;
 }
 
 function ordenarResultados(resultados, orden) {
