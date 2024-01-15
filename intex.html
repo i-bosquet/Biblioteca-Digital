@@ -34,23 +34,24 @@
         <div class="search-wrapper">
             <div class="button-group">
                 <button class="action-btn" id="infoBtn" title="Obtener información sobre la búsqueda"><i
-                        class="fas fa-info-circle"></i> INFO</button>
+                        class="fas fa-info-circle" aria-hidden="true"></i> INFORMACIÓN</button>
                 <button class="action-btn" id="advancedSearchBtn" title="Realizar una búsqueda avanzada"><i
-                        class="fas fa-cog"></i> BÚSQUEDA AVANZADA</button>
+                        class="fas fa-cog" aria-hidden="true"></i> BÚSQUEDA AVANZADA</button>
             </div>
             <div class="search-container">
                 <input type="text" id="searchInput" class="search-box"
                     placeholder="Buscar libros, autores, categorías..." aria-label="Buscar en la biblioteca">
-                <button class="action-btn" id="searchBtn" title="Buscar en la biblioteca"><i class="fas fa-search"></i>
+                <button class="action-btn" id="searchBtn" title="Buscar en la biblioteca"><i class="fas fa-search" aria-hidden="true"></i>
                     BUSCAR</button>
                 <div class="voice-buttons-container">
-                    <button class="voice-btn" id="voiceSearchBtn" title="Buscar por voz"><i
+                    <button class="voice-btn" id="voiceSearchBtn" title="Buscar por voz" aria-label="Buscar por voz"><i
                             class="fas fa-microphone"></i></button>
-                    <button class="voice-btn" title="Leer texto en voz alta"><i
+                    <button class="voice-btn" title="Leer texto en voz alta" aria-label="Leer texto en voz alta"><i
                             class="fas fa-volume-up"></i></button>
                 </div>
             </div>
         </div>
+        
         <div class="results-and-filters-container">
             <!-- Contenedor de filtros (visible solo en pantallas grandes) -->
             <div id="filterContainer" class="filter-container">

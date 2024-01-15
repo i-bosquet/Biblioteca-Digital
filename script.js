@@ -107,19 +107,6 @@ document.addEventListener('DOMContentLoaded', function() {
     cargarRecursos();
 });
 
-/* --------------------
-   Manejo de Búsquedas
-   -------------------- */
-
-// Verificar si una búsqueda ya está guardada
-function isSearchSaved(searchTerm) {
-    return savedSearches.some(savedSearch => JSON.stringify(savedSearch) === JSON.stringify(search));
-}
-
-// Función para validar el término de búsqueda
-function isValidSearchTerm(searchTerm) {
-    return searchTerm !== '';
-}
 
 /* -----------------------------
    Visualización de resultadoss
@@ -261,7 +248,7 @@ Array.from(closeBtn).forEach(button => {
 });
 
 // Event listener para el botón de guardar búsqueda
-saveFilterBtn.addEventListener('click', function() {
+saveFilterBtn.addEventListener('click', function () {
     // Obtener los criterios de búsqueda actuales
     let currentSearchValues = getCriteriosDeBusqueda();
 
@@ -290,13 +277,13 @@ saveFilterBtn.addEventListener('click', function() {
 });
 
 // Event listener para el boton de filtros guardados
-savedSearchesBtn.addEventListener('click', function() {
+savedSearchesBtn.addEventListener('click', function () {
     updateSavedSearchesModal();
     openModal('savedSearchesModal'); // Usa la función openModal para mostrar el modal
 });
 
 // Event listener para el boton de filtros guardados desde el modal
-savedSearchesModalBtn.addEventListener('click', function() {
+savedSearchesModalBtn.addEventListener('click', function () {
     updateSavedSearchesModal();
     openModal('savedSearchesModal'); // Usa la función openModal para mostrar el modal
 });
@@ -309,14 +296,14 @@ window.onclick = function (event) {
 }
 
 // Event listener para el botón de limpiar filtros
-clearFiltersBtn.addEventListener('click', function() {
+clearFiltersBtn.addEventListener('click', function () {
     if (confirm('¿Estás seguro de que quieres limpiar todos los filtros?')) {
         clearFilters();
     }
 });
 
 // Event listener para el botón de limpiar filtros
-clearFiltersModalBtn.addEventListener('click', function() {
+clearFiltersModalBtn.addEventListener('click', function () {
     if (confirm('¿Estás seguro de que quieres limpiar todos los filtros?')) {
         clearFilters();
     }
@@ -326,7 +313,7 @@ clearFiltersModalBtn.addEventListener('click', function() {
 searchBtn.addEventListener("click", aplicarFiltro);
 
 // Event listener para el campo de búsqueda
-searchInput.addEventListener('input', function() {
+searchInput.addEventListener('input', function () {
     let searchValue = this.value;
 
     // Transfiere el valor actual del campo de búsqueda al primer input de los filtros
@@ -335,7 +322,7 @@ searchInput.addEventListener('input', function() {
 });
 
 // Event listener para el selectpr de catalogo 
-selectCatalog.addEventListener('change', function() {
+selectCatalog.addEventListener('change', function () {
     console.log("Nuevo valor seleccionado en el catálogo:", this.value);
 });
 
@@ -349,8 +336,8 @@ applyFilterBtn.addEventListener('click', aplicarFiltro);
    Gestión de Búsquedas Guardadas
    ------------------------------ */
 
-   //Evitar Guardar Búsquedas Avanzadas Duplicadas
-   function getAdvancedSearchValues() {
+//Evitar Guardar Búsquedas Avanzadas Duplicadas
+function getAdvancedSearchValues() {
     let values = [];
     document.querySelectorAll('#advancedSearchModal .row').forEach(row => {
         let rowValues = [];
@@ -380,11 +367,10 @@ function translateValue(value) {
 
 // Función para guardar una nueva búsqueda
 function saveNewSearch() {
-    searchDescription.innerText;
-    let filterValues = getCriteriosDeBusqueda();
-    let searchToSave = { description: searchDescription.innerText, criteria: filterValues }; // Asegúrate de que solo el texto se esté guardando
+    let filterValues = getCriteriosDeBusqueda(); // Ya incluye los identificadores
+    let searchToSave = { description: searchDescription.innerText, criteria: filterValues };
 
-    let alreadySaved = savedSearches.some(savedSearch => 
+    let alreadySaved = savedSearches.some(savedSearch =>
         JSON.stringify(savedSearch.criteria) === JSON.stringify(filterValues)
     );
 
@@ -400,6 +386,57 @@ function saveNewSearch() {
     } else {
         showAlertMessage('Este filtro o búsqueda ya está guardado.');
     }
+}
+
+function getCriteriosDeBusquedaConIdentificadores() {
+    let criterios = [];
+
+    // Filtro de catálogo
+    let catalogoSeleccionado = selectCatalog.value;
+    agregarCriterioSiDiferente(criterios, catalogoSeleccionado, 'catalogo', 'Todos los catálogos', 'selectCatalog');
+
+    // Filtro de formato
+    let formatoSeleccionado = document.getElementById('format').value;
+    agregarCriterioSiDiferente(criterios, formatoSeleccionado, 'formato_recurso', 'Todos los formatos', 'format');
+
+    // Filtro de materia
+    let materiaSeleccionada = document.getElementById('subject').value;
+    agregarCriterioSiDiferente(criterios, materiaSeleccionada, 'materia', 'Todas las materias', 'subject');
+
+    // Filtro de autor
+    let autorSeleccionado = document.getElementById('author').value;
+    agregarCriterioSiDiferente(criterios, autorSeleccionado, 'autor', 'Todos los autores', 'author');
+
+    // Filtro de editorial
+    let editorialSeleccionada = document.getElementById('publisher').value;
+    agregarCriterioSiDiferente(criterios, editorialSeleccionada, 'editorial', 'Todas las editoriales', 'publisher');
+
+    // Filtro de idioma
+    let idiomaSeleccionado = document.getElementById('language').value;
+    agregarCriterioSiDiferente(criterios, idiomaSeleccionado, 'idioma', 'Todos los idiomas', 'language');
+
+    // Filtro de disponibilidad (checkbox)
+    if (availableOnlyCheckbox.checked) {
+        criterios.push({ campo: 'disponibilidad', condicion: 'is', termino: true, id: 'availableOnly' }); // Añade el identificador del checkbox
+    }
+
+    // Filtro de localización
+    let localizacionSeleccionada = document.getElementById('locationFilter').value;
+    agregarCriterioSiDiferente(criterios, localizacionSeleccionada, 'localizacion', 'Todas las localizaciones', 'locationFilter');
+
+    // Filtro de fecha de inicio
+    let fechaInicio = document.getElementById('dateIni').value;
+    if (fechaInicio) {
+        criterios.push({ campo: 'fecha_inicio', condicion: '>=', termino: fechaInicio, id: 'dateIni' });
+    }
+
+    // Filtro de fecha de fin
+    let fechaFin = document.getElementById('dateEnd').value;
+    if (fechaFin) {
+        criterios.push({ campo: 'fecha_fin', condicion: '<=', termino: fechaFin, id: 'dateEnd' });
+    }
+
+    return criterios;
 }
 
 // Función auxiliar para guardar una búsqueda
@@ -484,18 +521,122 @@ function confirmAndDeleteSearch(index, buttonElement) {
 }
 
 // Seleccionar una búsqueda guardada desde el modal
-function selectSearch(search) {
-    if (search.criteria.length === 1 && search.criteria[0][0] === 'any') {
-        // Búsqueda simple
-        searchInput.value = search.criteria[0][2];
-    } else {
-        // Búsqueda avanzada
-        // Establecer los valores en los filtros de búsqueda avanzada
-        setAdvancedSearchValues(search.criteria);
-        openModal('advancedSearchModal');
+function selectSearch(savedSearch) {
+    if (!savedSearch || !savedSearch.criteria || savedSearch.criteria.length === 0) {
+        console.error("Error: Los criterios de búsqueda guardados no son válidos o están vacíos.");
+        return;
     }
-    closeModal('savedSearchesModal');
+
+    clearFilters();
+
+    savedSearch.criteria.forEach(criterio => {
+        let control = document.getElementById(criterio.id);
+        if (control) {
+            control.value = criterio.termino;
+        }
+    });
+
+    // Actualizar la descripción y los resultados
     updateSearchDescription();
+    aplicarFiltro();
+}
+
+function applyGeneralSearch(termino) {
+    // Aquí aplicarías el término a un campo de búsqueda general
+    // O podrías aplicarlo a varios campos si eso tiene sentido en tu aplicación
+    const generalSearchInput = document.getElementById('generalSearchInput'); // Asegúrate de tener este input en tu HTML
+    if (generalSearchInput) {
+        generalSearchInput.value = termino;
+    }
+}
+
+function applyCriterion(criterio) {
+    let control;
+    switch (criterio.campo) {
+        case 'catalogo':
+            control = document.getElementById('selectCatalog');
+            break;
+        case 'formato_recurso':
+            control = document.getElementById('format');
+            break;
+        case 'autor':
+            control = document.getElementById('author');
+            break;
+        case 'titulo':
+            control = document.getElementById('title');
+            break;
+        case 'localizacion':
+            control = document.getElementById('location');
+            break;
+        case 'disponibilidad':
+            control = document.getElementById('availability');
+            break;
+        // Añade aquí más casos para otros campos
+        default:
+            console.log(`Criterio no reconocido: ${JSON.stringify(criterio)}`);
+            return;
+    }
+
+    if (control) {
+        control.value = criterio.termino;
+    }
+}
+
+function applyCriteriaFromDescription(description) {
+    // Ejemplo de descripción: "Búsqueda: Título contiene 'm'"
+    let matches = description.match(/(.*?): (.*) contiene "(.*)"/);
+    if (matches && matches.length === 4) {
+        let campo = matches[1].toLowerCase();
+        let condicion = matches[2].toLowerCase();
+        let termino = matches[3];
+
+        // Encuentra los controles de búsqueda avanzada y aplica los valores
+        applyAdvancedSearchCriteria(campo, condicion, termino);
+    }
+}
+
+function applyAdvancedSearchCriteria(campo, condicion, termino) {
+    // Encuentra la primera fila de búsqueda avanzada
+    let firstRow = document.querySelector('.search-filters .row');
+    if (!firstRow) return;
+
+    // Establece los valores en los controles de la primera fila
+    let fieldSelect = firstRow.querySelector('.field-select');
+    let conditionSelect = firstRow.querySelector('.condition-select');
+    let input = firstRow.querySelector('input[type="text"]');
+
+    if (fieldSelect && conditionSelect && input) {
+        // Aquí debes mapear los nombres de campos a los valores esperados por los selectores
+        fieldSelect.value = mapFieldToValue(campo);
+        conditionSelect.value = condicion;
+        input.value = termino;
+    }
+}
+
+function mapFieldToValue(field) {
+    // Mapea los nombres de campo a los valores que espera el selector de campo
+    const fieldMap = {
+        'título': 'title',
+        // Añadir otros mapeos según sea necesario
+    };
+    return fieldMap[field] || field;
+}
+
+function setAdvancedSearchCriteria(criterio) {
+    // Encuentra la primera fila de búsqueda avanzada
+    let firstRow = document.querySelector('.search-filters .row');
+    if (!firstRow) return;
+
+    // Establece los valores en los controles de la primera fila
+    let fieldSelect = firstRow.querySelector('.field-select');
+    let conditionSelect = firstRow.querySelector('.condition-select');
+    let input = firstRow.querySelector('input[type="text"]');
+
+    if (fieldSelect && conditionSelect && input) {
+        fieldSelect.value = 'any'; // Aquí asumimos que el campo es 'any'
+        conditionSelect.value = criterio.condicion;
+        input.value = criterio.termino;
+    }
 }
 
 
@@ -916,7 +1057,7 @@ function getCriteriosDeBusqueda() {
 
 function agregarCriterioSiDiferente(criterios, valor, campo, textoPorDefecto, condicion = 'is') {
     if (valor && valor !== textoPorDefecto) {
-        criterios.push({ campo, condicion, termino: valor });
+        criterios.push({ campo, condicion: 'is', termino: valor, id: controlID });
     }
 }
 

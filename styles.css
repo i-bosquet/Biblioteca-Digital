@@ -3,7 +3,7 @@
     --primary-color: #012f61;
     --secondary-color: #007bff;
     --terciary-color: #0099ff;
-    --background-color: #f5f5f5;
+    --background-color: #dddddd;
     --text-color: white;
     --modal-background: rgba(0, 0, 0, 0.4);
     --tooltip-background: #555;
@@ -103,7 +103,7 @@ body {
 
 .button-group {
     text-align: center;
-    margin-bottom: 20px;
+    margin: 10px 10px 20px;
 }
 
 .action-btn {
@@ -325,7 +325,7 @@ h2 {
     align-items: center;
     margin: 5px;
     padding: 10px 15px;
-    background-color: #e9e9e9; /* Un fondo distinto para la explicación de búsqueda */
+    background-color: var(--background-color); /* Un fondo distinto para la explicación de búsqueda */
     border-radius: 5px;
 }
 
@@ -664,20 +664,19 @@ h2 {
     }
 
     .nav-menu {
-        width: 100%;
         flex-direction: row;
         justify-content: space-around;
         margin-top: 10px;
     }
 
     .nav-menu li {
-        padding: 10px;
+        padding: 10px 5px;
     }
 
     .nav-menu a {
         color:var(--primary-color);
         text-decoration: none;
-        font-size: 18px;
+        font-size: 16px;
         padding: 5px;
     }
     
@@ -690,6 +689,7 @@ h2 {
 
     .nav-menu a.active-link {
         color: var(--text-color);
+        background-color: var(--primary-color);
     }
 
     .main-content {
@@ -781,4 +781,12 @@ h2 {
         margin-bottom: 5px;
         align-self: self-start;
     }
+
+    .result-cover img {
+        margin: 10px 60px;
+    }
+
+    result-info {
+        text-align: center;
+    }   
 }
